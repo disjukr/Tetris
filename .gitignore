@@ -1,0 +1,7 @@
+.DS_Store
+Debug
+Tetris
+*.d
+*.o
+*.sdf
+*.suo
