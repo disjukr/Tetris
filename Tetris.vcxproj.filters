@@ -17,10 +17,33 @@
     <ClCompile Include="main.cc">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Tetris.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Time.hh">
       <Filter>Header</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tetris.hh">
+      <Filter>Header</Filter>
+    </None>
+    <None Include="Color.hh">
+      <Filter>Header</Filter>
+    </None>
+    <None Include="Console.hh">
+      <Filter>Header</Filter>
+    </None>
+    <None Include="Screen.hh">
+      <Filter>Header</Filter>
+    </None>
   </ItemGroup>
 </Project>

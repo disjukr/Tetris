@@ -62,11 +62,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Console.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="Screen.cc" />
+    <ClCompile Include="Tetris.cc" />
     <ClCompile Include="Time.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Time.hh" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Color.hh" />
+    <None Include="Console.hh" />
+    <None Include="Screen.hh" />
+    <None Include="Tetris.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
