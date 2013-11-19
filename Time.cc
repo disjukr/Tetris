@@ -15,8 +15,8 @@ void gettimeofday(struct timeval* tv, int* tz) {
     tmpres |= ft.dwLowDateTime;
     tmpres /= 10;
     tmpres -= DELTA_EPOCH_IN_MICROSECS;
-    tv->tv_sec = (long int) (tmpres / 1000000UL);
-    tv->tv_usec = (long int) (tmpres % 1000000UL);
+    tv -> tv_sec = (long int) (tmpres / 1000000UL);
+    tv -> tv_usec = (long int) (tmpres % 1000000UL);
 }
 
 #else

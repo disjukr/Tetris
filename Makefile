@@ -1,5 +1,5 @@
 CC = g++
-SRCS = main.cc Time.cc
+SRCS = main.cc Tetris.cc Time.cc Screen.cc Console.cc
 OBJS = $(SRCS:.cc=.o)
 DEPS = $(OBJS:.o=.d)
 TARGET = Tetris
