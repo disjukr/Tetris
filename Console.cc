@@ -35,7 +35,7 @@ WORD foregroundMask = FOREGROUND_INTENSITY | FOREGROUND_RED |
 WORD backgroundMask = BACKGROUND_INTENSITY | BACKGROUND_RED |
     BACKGROUND_GREEN | BACKGROUND_BLUE;
 
-WORD GetAttributes(Color color, WORD mask, WORD intensity,
+WORD GetMaskedAttributes(Color color, WORD mask, WORD intensity,
                    WORD red, WORD green, WORD blue) {
     switch (color) {
     default: case NONE: return oldAttributes & mask;
@@ -52,13 +52,20 @@ WORD GetAttributes(Color color, WORD mask, WORD intensity,
 }
 
 WORD GetForegroundAttributes(Color color) {
-    return GetAttributes(color, foregroundMask, FOREGROUND_INTENSITY,
-        FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE);
+    return GetMaskedAttributes(color, foregroundMask,
+        FOREGROUND_INTENSITY, FOREGROUND_RED,
+        FOREGROUND_GREEN, FOREGROUND_BLUE);
 }
 
 WORD GetBackgroundAttributes(Color color) {
-    return GetAttributes(color, backgroundMask, BACKGROUND_INTENSITY,
-        BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE);
+    return GetMaskedAttributes(color, backgroundMask,
+        BACKGROUND_INTENSITY, BACKGROUND_RED,
+        BACKGROUND_GREEN, BACKGROUND_BLUE);
+}
+
+WORD GetAttributes(Color foreground, Color background) {
+    return GetForegroundAttributes(foreground) |
+        GetBackgroundAttributes(background);
 }
 #else
 string Console::foregroundBegin;
@@ -71,37 +78,19 @@ Screen* Console::GetScreen() {
     return &Console::screen;
 }
 
-void Console::Clear(char value, Color foreground, Color background) {
+void Console::Clear() {
 #ifdef _WIN32
     //system("cls");
     cls(GetStdHandle(STD_OUTPUT_HANDLE));
 #else
     system("clear");
 #endif
-    screen.Clear(value, foreground, background);
-}
-
-void Console::Clear(char value, Color background) {
-    Clear(value, NONE, background);
-}
-
-void Console::Clear(Color background) {
-    Clear(' ', NONE, background);
-}
-
-void Console::Clear(char value) {
-    Clear(value, NONE, NONE);
-}
-
-void Console::Clear() {
-    Clear(' ', NONE, NONE);
 }
 
 void Console::SetColor(Color foreground, Color background) {
 #ifdef _WIN32
     SetConsoleTextAttribute(hStdout,
-        GetForegroundAttributes(foreground) |
-        GetBackgroundAttributes(background));
+        GetAttributes(foreground, background));
 #else
     foregroundEnd = "\x1B[39m";
     backgroundEnd = "\x1B[49m";
@@ -148,20 +137,48 @@ void Console::UnsetColor() {
 }
 
 void Console::ShowScreen() {
-    int width = screen.GetWidth();
-    int height = screen.GetHeight();
 #ifdef _WIN32
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
     GetConsoleScreenBufferInfo(hStdout, &screenInfo);
     oldAttributes = screenInfo.wAttributes;
 #endif
+    int width = screen.GetWidth();
+    int height = screen.GetHeight();
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
             SetColor(screen.GetColor(i, j, false),
                      screen.GetColor(i, j, true));
-            cout << screen.GetChar(i, j);
+            cout.put(screen.GetChar(i, j));
             UnsetColor();
         }
         cout << endl;
     }
+}
+
+void Console::Update() {
+#ifdef _WIN32
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    int width = screen.GetWidth();
+    int height = screen.GetHeight();
+    for (int j = 0; j < height; ++j) {
+        for (int i = 0; i < width; ++i) {
+            Cell* prevCell = prevScreen.GetCell(i, j);
+            Cell* cell = screen.GetCell(i, j);
+            if (*prevCell == *cell) continue;
+            COORD cursorCoord = {i, j};
+            SetConsoleCursorPosition(hStdout, cursorCoord);
+            cout.put(cell -> value);
+            FillConsoleOutputAttribute(
+                hStdout,
+                GetAttributes(cell -> foreground, cell -> background),
+                1, cursorCoord, NULL);
+            prevCell -> value = cell -> value;
+            prevCell -> foreground = cell -> foreground;
+            prevCell -> background = cell -> background;
+        }
+    }
+#else
+    Clear();
+    ShowScreen();
+#endif
 }

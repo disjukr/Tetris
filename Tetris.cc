@@ -24,7 +24,7 @@ void Tetris::Start() {
         current = Time::msec();
         diff = current - prevFrame;
         if (diff >= this -> interval) {
-            Console::Clear(' ', BLACK, WHITE);
+            mainScreen -> Clear(' ', BLACK, GREEN);
             mainScreen -> WriteLine(":: TETRIS ::", 0, 0);
             mainScreen -> FillLine(WHITE, 0, 0, 12, true);
             mainScreen -> FillCell(MAGENTA, (frame % 6) + 3, 0, true);
@@ -33,7 +33,7 @@ void Tetris::Start() {
             mainScreen -> FillCell(GREEN, ((frame + 3) % 6) + 3, 0, true);
             mainScreen -> FillCell(CYAN, ((frame + 4) % 6) + 3, 0, true);
             mainScreen -> FillCell(BLUE, ((frame + 5) % 6) + 3, 0, true);
-            Console::ShowScreen();
+            Console::Update();
             prevFrame = current - (diff - interval);
             ++frame;
         }

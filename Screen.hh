@@ -42,6 +42,14 @@ public:
     void Clear() {
         Clear(' ', NONE, NONE);
     }
+    bool operator==(const Cell& rhs)const {
+        return this -> value == rhs.value &&
+            this -> foreground == rhs.foreground &&
+            this -> background == rhs.background;
+    }
+    bool operator!=(const Cell& rhs)const {
+        return !(*this == rhs);
+    }
 };
 
 class Screen {
