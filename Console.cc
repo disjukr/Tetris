@@ -2,6 +2,25 @@
 #include <stdlib.h>
 #include <iostream>
 
+#ifdef _WIN32
+#include <Windows.h>
+void cls(HANDLE hConsole) {
+    COORD coordScreen = {0, 0};
+    DWORD cCharsWritten;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD dwConSize;
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+    FillConsoleOutputCharacter(hConsole, (TCHAR) ' ',
+        dwConSize, coordScreen, &cCharsWritten);
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes,
+        dwConSize, coordScreen, &cCharsWritten);
+    SetConsoleCursorPosition(hConsole, coordScreen);
+    return;
+}
+#endif
+
 using namespace std;
 
 Screen Console::screen;
@@ -12,7 +31,8 @@ Screen* Console::GetScreen() {
 
 void Console::Clear(char value, Color foreground, Color background) {
 #ifdef _WIN32
-    system("cls");
+    //system("cls");
+    cls(GetStdHandle(STD_OUTPUT_HANDLE));
 #else
     system("clear");
 #endif
@@ -38,12 +58,93 @@ void Console::Clear() {
 void Console::ShowScreen() {
     int width = screen.GetWidth();
     int height = screen.GetHeight();
+#ifdef _WIN32
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO screenInfo;
+    GetConsoleScreenBufferInfo(hStdout, &screenInfo);
+    WORD oldAttributes = screenInfo.wAttributes;
+    WORD foregroundMask = FOREGROUND_INTENSITY | FOREGROUND_RED |
+        FOREGROUND_GREEN | FOREGROUND_BLUE;
+    WORD backgroundMask = BACKGROUND_INTENSITY | BACKGROUND_RED |
+        BACKGROUND_GREEN | BACKGROUND_BLUE;
+#else
     string foregroundBegin;
     string backgroundBegin;
     string foregroundEnd;
     string backgroundEnd;
+#endif
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
+#ifdef _WIN32
+            WORD foreground, background;
+            switch (screen.GetColor(i, j, false)) {
+            default: case NONE:
+                foreground = oldAttributes & foregroundMask;
+                break;
+            case WHITE:
+                foreground = foregroundMask;
+                break;
+            case GREY:
+                foreground = foregroundMask & ~FOREGROUND_INTENSITY;
+                break;
+            case BLACK:
+                foreground = 0;
+                break;
+            case BLUE:
+                foreground = FOREGROUND_INTENSITY | FOREGROUND_BLUE;
+                break;
+            case CYAN:
+                foreground = foregroundMask & ~FOREGROUND_RED;
+                break;
+            case GREEN:
+                foreground = FOREGROUND_INTENSITY | FOREGROUND_GREEN;
+                break;
+            case MAGENTA:
+                foreground = foregroundMask & ~FOREGROUND_GREEN;
+                break;
+            case RED:
+                foreground = FOREGROUND_INTENSITY | FOREGROUND_RED;
+                break;
+            case YELLOW:
+                foreground = foregroundMask & ~FOREGROUND_BLUE;
+                break;
+            }
+            switch (screen.GetColor(i, j, true)) {
+            default: case NONE:
+                background = oldAttributes & backgroundMask;
+                break;
+            case WHITE:
+                background = backgroundMask;
+                break;
+            case GREY:
+                background = backgroundMask & ~BACKGROUND_INTENSITY;
+                break;
+            case BLACK:
+                background = 0;
+                break;
+            case BLUE:
+                background = BACKGROUND_INTENSITY | BACKGROUND_BLUE;
+                break;
+            case CYAN:
+                background = backgroundMask & ~BACKGROUND_RED;
+                break;
+            case GREEN:
+                background = BACKGROUND_INTENSITY | BACKGROUND_GREEN;
+                break;
+            case MAGENTA:
+                background = backgroundMask & ~BACKGROUND_GREEN;
+                break;
+            case RED:
+                background = BACKGROUND_INTENSITY | BACKGROUND_RED;
+                break;
+            case YELLOW:
+                background = backgroundMask & ~BACKGROUND_BLUE;
+                break;
+            }
+            SetConsoleTextAttribute(hStdout, foreground | background);
+            std::cout << screen.GetChar(i, j);
+            SetConsoleTextAttribute(hStdout, oldAttributes);
+#else
             foregroundEnd = "\x1B[39m";
             backgroundEnd = "\x1B[49m";
             switch (screen.GetColor(i, j, false)) {
@@ -79,6 +180,7 @@ void Console::ShowScreen() {
             cout << foregroundBegin << backgroundBegin
                 << screen.GetChar(i, j)
                 << foregroundEnd << backgroundEnd;
+#endif
         }
         cout << endl;
     }

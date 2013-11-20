@@ -17,7 +17,7 @@ Screen::Screen(int width, int height, Screen* display) {
 }
 
 Screen::Screen() {
-    init(80, 25, NULL);
+    init(79, 24, NULL);
 }
 
 Screen::~Screen() {
