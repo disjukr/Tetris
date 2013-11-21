@@ -14,6 +14,7 @@ class Console {
     static void UnsetColor();
 public:
     static Screen* GetScreen();
+    static void SetEcho(bool echo);
     static void Clear();
     static void ShowScreen();
     static void Update();

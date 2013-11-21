@@ -36,7 +36,7 @@ WORD backgroundMask = BACKGROUND_INTENSITY | BACKGROUND_RED |
     BACKGROUND_GREEN | BACKGROUND_BLUE;
 
 WORD GetMaskedAttributes(Color color, WORD mask, WORD intensity,
-                   WORD red, WORD green, WORD blue) {
+                         WORD red, WORD green, WORD blue) {
     switch (color) {
     default: case NONE: return oldAttributes & mask;
     case WHITE: return mask;
@@ -68,6 +68,10 @@ WORD GetAttributes(Color foreground, Color background) {
         GetBackgroundAttributes(background);
 }
 #else
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+
 string Console::foregroundBegin;
 string Console::backgroundBegin;
 string Console::foregroundEnd;
@@ -76,6 +80,17 @@ string Console::backgroundEnd;
 
 Screen* Console::GetScreen() {
     return &Console::screen;
+}
+
+void Console::SetEcho(bool echo) {
+#ifndef _WIN32
+    struct termios stdIn;
+    tcgetattr(STDIN_FILENO, &stdIn);
+    stdIn.c_lflag &= ~ECHO;
+    stdIn.c_lflag |= echo ? ECHO : 0;
+    tcsetattr(STDIN_FILENO, TCSANOW, &stdIn);
+#endif
+    return;
 }
 
 void Console::Clear() {
