@@ -35,6 +35,7 @@ void Tetris::Start() {
     unsigned int frame = 0;
     Screen* mainScreen = Console::GetScreen();
     Console::SetEcho(false);
+    Console::SetCursor(false);
     while (true) {
         current = Time::msec();
         diff = current - prevFrame;
@@ -56,4 +57,5 @@ void Tetris::Start() {
         }
     }
     Console::SetEcho(true);
+    Console::SetCursor(true);
 }

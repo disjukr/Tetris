@@ -5,10 +5,9 @@
 using namespace std;
 
 Screen Console::screen;
-
-#ifdef _WIN32
 Screen Console::prevScreen;
 
+#ifdef _WIN32
 #include <Windows.h>
 
 void cls(HANDLE hConsole) {
@@ -74,8 +73,7 @@ WORD GetAttributes(Color foreground, Color background) {
 
 string Console::foregroundBegin;
 string Console::backgroundBegin;
-string Console::foregroundEnd;
-string Console::backgroundEnd;
+string Console::colorEnd;
 #endif
 
 Screen* Console::GetScreen() {
@@ -93,12 +91,18 @@ void Console::SetEcho(bool echo) {
     return;
 }
 
+void Console::SetCursor(bool visible) {
+#ifndef _WIN32
+    cout << "\x1B[?25" << (visible ? 'h' : 'l');
+#endif
+    return;
+}
+
 void Console::Clear() {
 #ifdef _WIN32
-    //system("cls");
     cls(GetStdHandle(STD_OUTPUT_HANDLE));
 #else
-    system("clear");
+    cout << "\x1B[2J\x1B[H";
 #endif
 }
 
@@ -107,37 +111,34 @@ void Console::SetColor(Color foreground, Color background) {
     SetConsoleTextAttribute(hStdout,
         GetAttributes(foreground, background));
 #else
-    foregroundEnd = "\x1B[39m";
-    backgroundEnd = "\x1B[49m";
+    colorEnd = "\x1B[0m";
     switch (foreground) {
     default: case NONE:
         foregroundBegin = "";
-        foregroundEnd = "";
         break;
-    case WHITE: foregroundBegin = "\x1B[37m"; break;
-    case GREY: foregroundBegin = "\x1B[90m"; break;
-    case BLACK: foregroundBegin = "\x1B[30m"; break;
-    case BLUE: foregroundBegin = "\x1B[34m"; break;
-    case CYAN: foregroundBegin = "\x1B[36m"; break;
-    case GREEN: foregroundBegin = "\x1B[32m"; break;
-    case MAGENTA: foregroundBegin = "\x1B[35m"; break;
-    case RED: foregroundBegin = "\x1B[31m"; break;
-    case YELLOW: foregroundBegin = "\x1B[33m"; break;
+    case WHITE: foregroundBegin = "\x1B[97"; break;
+    case GREY: foregroundBegin = "\x1B[90"; break;
+    case BLACK: foregroundBegin = "\x1B[30"; break;
+    case BLUE: foregroundBegin = "\x1B[94"; break;
+    case CYAN: foregroundBegin = "\x1B[96"; break;
+    case GREEN: foregroundBegin = "\x1B[92"; break;
+    case MAGENTA: foregroundBegin = "\x1B[95"; break;
+    case RED: foregroundBegin = "\x1B[91"; break;
+    case YELLOW: foregroundBegin = "\x1B[93"; break;
     }
     switch (background) {
     default: case NONE:
         backgroundBegin = "";
-        backgroundEnd = "";
         break;
-    case WHITE: backgroundBegin = "\x1B[47m"; break;
-    case GREY: backgroundBegin = "\x1B[49;5;8m"; break;
-    case BLACK: backgroundBegin = "\x1B[40m"; break;
-    case BLUE: backgroundBegin = "\x1B[44m"; break;
-    case CYAN: backgroundBegin = "\x1B[46m"; break;
-    case GREEN: backgroundBegin = "\x1B[42m"; break;
-    case MAGENTA: backgroundBegin = "\x1B[45m"; break;
-    case RED: backgroundBegin = "\x1B[41m"; break;
-    case YELLOW: backgroundBegin = "\x1B[43m"; break;
+    case WHITE: backgroundBegin = ";47m"; break;
+    case GREY: backgroundBegin = ";47m"; break;
+    case BLACK: backgroundBegin = ";40m"; break;
+    case BLUE: backgroundBegin = ";44m"; break;
+    case CYAN: backgroundBegin = ";46m"; break;
+    case GREEN: backgroundBegin = ";42m"; break;
+    case MAGENTA: backgroundBegin = ";45m"; break;
+    case RED: backgroundBegin = ";41m"; break;
+    case YELLOW: backgroundBegin = ";43m"; break;
     }
     cout << foregroundBegin << backgroundBegin;
 #endif
@@ -147,7 +148,7 @@ void Console::UnsetColor() {
 #ifdef _WIN32
     SetConsoleTextAttribute(hStdout, oldAttributes);
 #else
-    cout << foregroundEnd << backgroundEnd;
+    cout << colorEnd;
 #endif
 }
 
@@ -173,6 +174,7 @@ void Console::ShowScreen() {
 void Console::Update() {
 #ifdef _WIN32
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
     int width = screen.GetWidth();
     int height = screen.GetHeight();
     for (int j = 0; j < height; ++j) {
@@ -180,20 +182,26 @@ void Console::Update() {
             Cell* prevCell = prevScreen.GetCell(i, j);
             Cell* cell = screen.GetCell(i, j);
             if (*prevCell == *cell) continue;
+#ifdef _WIN32
             COORD cursorCoord = {i, j};
             SetConsoleCursorPosition(hStdout, cursorCoord);
+#else
+            cout << "\x1B[" << to_string(j + 1) << ';'
+                << to_string(i + 1) << 'H';
+            SetColor(cell -> foreground, cell -> background);
+#endif
             cout.put(cell -> value);
+#ifdef _WIN32
             FillConsoleOutputAttribute(
                 hStdout,
                 GetAttributes(cell -> foreground, cell -> background),
                 1, cursorCoord, NULL);
+#else
+            UnsetColor();
+#endif
             prevCell -> value = cell -> value;
             prevCell -> foreground = cell -> foreground;
             prevCell -> background = cell -> background;
         }
     }
-#else
-    Clear();
-    ShowScreen();
-#endif
 }
