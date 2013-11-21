@@ -63,6 +63,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Console.cc" />
+    <ClCompile Include="Keyboard.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="Screen.cc" />
     <ClCompile Include="Tetris.cc" />
@@ -74,6 +75,7 @@
   <ItemGroup>
     <None Include="Color.hh" />
     <None Include="Console.hh" />
+    <None Include="Keyboard.hh" />
     <None Include="Screen.hh" />
     <None Include="Tetris.hh" />
   </ItemGroup>

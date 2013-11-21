@@ -26,6 +26,9 @@
     <ClCompile Include="Screen.cc">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Keyboard.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Time.hh">
@@ -43,6 +46,9 @@
       <Filter>Header</Filter>
     </None>
     <None Include="Screen.hh">
+      <Filter>Header</Filter>
+    </None>
+    <None Include="Keyboard.hh">
       <Filter>Header</Filter>
     </None>
   </ItemGroup>
