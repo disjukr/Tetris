@@ -4,6 +4,7 @@
 
 #ifdef _WIN32
 #include <conio.h>
+#include <Windows.h>
 #else
 #include <termios.h>
 #include <unistd.h>
@@ -42,6 +43,12 @@ bool Keyboard::hit() {
 }
 
 Key Keyboard::code() {
+#ifdef _WIN32
+    if (GetAsyncKeyState(VK_UP) & SHRT_MAX) return UP;
+    else if (GetAsyncKeyState(VK_DOWN) & SHRT_MAX) return DOWN;
+    else if (GetAsyncKeyState(VK_LEFT) & SHRT_MAX) return LEFT;
+    else if (GetAsyncKeyState(VK_RIGHT) & SHRT_MAX) return RIGHT;
+#endif
     if (_kbhit()) {
         switch (nonblockGetCh()) {
         case 27:
