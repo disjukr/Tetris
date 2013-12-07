@@ -10,6 +10,7 @@ using namespace std;
 Tetris::Tetris() {
     this -> exit = false;
     this -> interval = 17;
+    this -> frame = 0;
 }
 
 Tetris::~Tetris() {}
@@ -18,6 +19,8 @@ void Tetris::SetFps(int fps) {
     this -> interval = 1000 / fps;
 }
 
+int x;
+int y;
 void draw_tetris(Screen* screen, int frame, int x, int y) {
     screen -> WriteLine(":: TETRIS ::", x, y);
     screen -> FillLine(WHITE, x, y, 12, true);
@@ -34,40 +37,46 @@ void Tetris::Exit() {
 }
 
 void Tetris::Start() {
-    long long int current;
-    long long int prevFrame = Time::msec();
+    x = 0;
+    y = 0;
+    long long int curr;
+    long long int prev = Time::msec();
     long long int diff;
-    int x = 0;
-    int y = 0;
-    unsigned int frame = 0;
-    Screen* mainScreen = Console::GetScreen();
     Console::Clear();
     Console::SetEcho(false);
     Console::SetCursor(false);
     while (true) {
-        current = Time::msec();
-        diff = current - prevFrame;
-        if (Keyboard::hit()) {
-            switch(Keyboard::code()) {
-            case UP: case W: --y; break;
-            case DOWN: case S: ++y; break;
-            case LEFT: case A: --x; break;
-            case RIGHT: case D: ++x; break;
-            case ESC: this -> Exit(); break;
-            default: break;
-            }
-        }
-        if (this -> exit) goto EXIT;
-        if (diff >= this -> interval) {
-            mainScreen -> Clear(' ', BLACK, GREEN);
-            draw_tetris(mainScreen, frame, x, y);
-            Console::Update();
-            prevFrame = current - (diff - interval);
+        curr = Time::msec();
+        diff = curr - prev;
+        GameLoop();
+        if (exit) break;
+        if (diff >= interval) {
+            Render();
+            prev = curr - (diff - interval);
             ++frame;
         }
     }
-EXIT:
     Console::Clear();
     Console::SetEcho(true);
     Console::SetCursor(true);
+}
+
+void Tetris::GameLoop() {
+    if (Keyboard::hit()) {
+        switch(Keyboard::code()) {
+        case UP: case W: --y; break;
+        case DOWN: case S: ++y; break;
+        case LEFT: case A: --x; break;
+        case RIGHT: case D: ++x; break;
+        case ESC: this -> Exit(); return;
+        default: break;
+        }
+    }
+}
+
+void Tetris::Render() {
+    Screen* mainScreen = Console::GetScreen();
+    mainScreen -> Clear(' ', BLACK, GREEN);
+    draw_tetris(mainScreen, frame, x, y);
+    Console::Update();
 }
