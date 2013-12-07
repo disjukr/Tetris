@@ -7,7 +7,10 @@
 
 using namespace std;
 
-Tetris::Tetris() {}
+Tetris::Tetris() {
+    this -> exit = false;
+    this -> interval = 17;
+}
 
 Tetris::~Tetris() {}
 
@@ -26,6 +29,10 @@ void draw_tetris(Screen* screen, int frame, int x, int y) {
     screen -> FillCell(BLUE, x + ((frame + 5) % 6) + 3, y, true);
 }
 
+void Tetris::Exit() {
+    this -> exit = true;
+}
+
 void Tetris::Start() {
     long long int current;
     long long int prevFrame = Time::msec();
@@ -34,6 +41,7 @@ void Tetris::Start() {
     int y = 0;
     unsigned int frame = 0;
     Screen* mainScreen = Console::GetScreen();
+    Console::Clear();
     Console::SetEcho(false);
     Console::SetCursor(false);
     while (true) {
@@ -45,9 +53,11 @@ void Tetris::Start() {
             case DOWN: case S: ++y; break;
             case LEFT: case A: --x; break;
             case RIGHT: case D: ++x; break;
+            case ESC: this -> Exit(); break;
             default: break;
             }
         }
+        if (this -> exit) goto EXIT;
         if (diff >= this -> interval) {
             mainScreen -> Clear(' ', BLACK, GREEN);
             draw_tetris(mainScreen, frame, x, y);
@@ -56,6 +66,8 @@ void Tetris::Start() {
             ++frame;
         }
     }
+EXIT:
+    Console::Clear();
     Console::SetEcho(true);
     Console::SetCursor(true);
 }
