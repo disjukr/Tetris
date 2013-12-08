@@ -183,6 +183,7 @@ void Console::Update() {
             Cell* cell = screen.GetCell(i, j);
             if (*prevCell == *cell) continue;
 #ifdef _WIN32
+            DWORD count;
             COORD cursorCoord = {i, j};
             SetConsoleCursorPosition(hStdout, cursorCoord);
 #else
@@ -195,7 +196,7 @@ void Console::Update() {
             FillConsoleOutputAttribute(
                 hStdout,
                 GetAttributes(cell -> foreground, cell -> background),
-                1, cursorCoord, NULL);
+                1, cursorCoord, &count);
 #else
             UnsetColor();
 #endif
