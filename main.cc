@@ -1,3 +1,7 @@
+#if defined _WIN32 && defined _DEBUG
+#include <crtdbg.h>
+#define new new(_CLIENT_BLOCK, __FILE__, __LINE__)
+#endif
 #include <cstdlib>
 #include <csignal>
 #include "Tetris.hh"
@@ -14,6 +18,10 @@ void signalHandler(int sig) {
 }
 
 int main() {
+#if defined _WIN32 && defined _DEBUG
+    // check memory leak
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
     // handle signal
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
