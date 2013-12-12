@@ -45,7 +45,7 @@ void Tetris::Start() {
     Console::Clear();
     Console::SetEcho(false);
     Console::SetCursor(false);
-    while (true) {
+    while (!exit) {
         curr = Time::msec();
         diff = curr - prev;
         GameLoop();

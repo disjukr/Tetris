@@ -79,10 +79,6 @@ void Screen::FillLine(Color color, int x, int y, int length, bool background) {
     }
 }
 
-void Screen::RenderScreen(Screen* screen, int x, int y) {
-    //TODO
-}
-
 void Screen::Clear(char value, Color foreground, Color background) {
     for (int j = 0; j < height; ++j)
         for (int i = 0; i < width; ++i)

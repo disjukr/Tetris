@@ -7,6 +7,7 @@
 #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
 
 void gettimeofday(struct timeval* tv, int* tz) {
+    tz;
     FILETIME ft;
     unsigned __int64 tmpres = 0;
     GetSystemTimeAsFileTime(&ft);

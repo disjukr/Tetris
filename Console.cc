@@ -81,7 +81,9 @@ Screen* Console::GetScreen() {
 }
 
 void Console::SetEcho(bool echo) {
-#ifndef _WIN32
+#ifdef _WIN32
+    echo;
+#else
     struct termios stdIn;
     tcgetattr(STDIN_FILENO, &stdIn);
     stdIn.c_lflag &= ~ECHO;
@@ -92,7 +94,9 @@ void Console::SetEcho(bool echo) {
 }
 
 void Console::SetCursor(bool visible) {
-#ifndef _WIN32
+#ifdef _WIN32
+    visible;
+#else
     cout << "\x1B[?25" << (visible ? 'h' : 'l');
 #endif
     return;
@@ -184,7 +188,7 @@ void Console::Update() {
             if (*prevCell == *cell) continue;
 #ifdef _WIN32
             DWORD count;
-            COORD cursorCoord = {i, j};
+            COORD cursorCoord = {(SHORT) i, (SHORT) j};
             SetConsoleCursorPosition(hStdout, cursorCoord);
 #else
             cout << "\x1B[" << to_string(j + 1) << ';'

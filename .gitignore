@@ -6,3 +6,4 @@ Tetris
 *.sdf
 *.suo
 *.opensdf
+*.vcxproj.user
