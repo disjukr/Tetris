@@ -125,3 +125,31 @@ public:
             return y == 3 && x < 2;
     }
 };
+
+class ZMino: public Tetromino {
+    bool vertical;
+public:
+    ZMino() {
+        vertical = true;
+        color = RED;
+        x = 0;
+        y = 0;
+    }
+    ~ZMino() {}
+    virtual void RotateCW() {
+        vertical = !vertical;
+    }
+    virtual void RotateCCW() {
+        vertical = !vertical;
+    }
+    virtual bool CheckBlock(int x, int y) {
+        if (!Tetromino::CheckBlock(x, y))
+            return false;
+        if (y == 2 && (x == 1 || x == 2))
+            return true;
+        if (vertical)
+            return (x == 2 && y == 1) || (x == 1 && y == 3);
+        else
+            return y == 3 && x > 1;
+    }
+};
