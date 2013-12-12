@@ -8,6 +8,8 @@ public:
         return !(x < 0 || x > 3 || y < 0 || y > 3);
     }
     Color color;
+    int x;
+    int y;
 };
 
 class IMino: public Tetromino {
@@ -16,6 +18,8 @@ public:
     IMino() {
         vertical = true;
         color = CYAN;
+        x = 0;
+        y = 0;
     }
     ~IMino() {}
     virtual void RotateCW() {
