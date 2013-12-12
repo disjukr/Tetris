@@ -72,7 +72,6 @@ public:
     void WriteLine(std::string value, int x, int y);
     void FillCell(Color color, int x, int y, bool background);
     void FillLine(Color color, int x, int y, int length, bool background);
-    void RenderScreen(Screen* screen, int x, int y);
     void Clear(char value, Color foreground, Color background);
     void Clear(char value, Color background);
     void Clear(Color background);

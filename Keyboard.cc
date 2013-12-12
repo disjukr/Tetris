@@ -32,14 +32,14 @@ int _kbhit() {
 
 char nonblockGetCh() {
 #ifdef _WIN32
-    return _getch();
+    return (char) _getch();
 #else
     return getchar();
 #endif
 }
 
 bool Keyboard::hit() {
-    return _kbhit();
+    return _kbhit() != 0;
 }
 
 Key Keyboard::code() {
