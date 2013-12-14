@@ -55,12 +55,11 @@ public:
 class Screen {
     int width;
     int height;
-    Screen* display;
     Cell** buffer;
     Cell dummy;
-    void init(int width, int height, Screen* display);
+    void init(int width, int height);
 public:
-    Screen(int width, int height, Screen* display);
+    Screen(int width, int height);
     Screen();
     ~Screen();
     int GetWidth();
@@ -72,6 +71,7 @@ public:
     void WriteLine(std::string value, int x, int y);
     void FillCell(Color color, int x, int y, bool background);
     void FillLine(Color color, int x, int y, int length, bool background);
+    void RenderScreen(Screen& screen, int x, int y);
     void Clear(char value, Color foreground, Color background);
     void Clear(char value, Color background);
     void Clear(Color background);

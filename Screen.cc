@@ -2,22 +2,21 @@
 
 using namespace std;
 
-void Screen::init(int width, int height, Screen* display) {
+void Screen::init(int width, int height) {
     this -> width = width;
     this -> height = height;
-    this -> display = display;
     this -> buffer = new Cell*[height];
     for (int i = 0; i < height; ++i) {
         buffer[i] = new Cell[width];
     }
 }
 
-Screen::Screen(int width, int height, Screen* display) {
-    init(width, height, display);
+Screen::Screen(int width, int height) {
+    init(width, height);
 }
 
 Screen::Screen() {
-    init(79, 24, NULL);
+    init(79, 24);
 }
 
 Screen::~Screen() {
@@ -76,6 +75,19 @@ void Screen::FillLine(Color color, int x, int y, int length, bool background) {
             cell -> background = color;
         else
             cell -> foreground = color;
+    }
+}
+
+void Screen::RenderScreen(Screen& screen, int x, int y) {
+    for (int j = 0; j < screen.height; ++j) {
+        for (int i = 0; i < screen.width; ++i) {
+            int tx = i + x;
+            int ty = j + y;
+            Cell* cell = screen.GetCell(i, j);
+            this -> WriteCell(cell -> value, tx, ty);
+            this -> FillCell(cell -> foreground, tx, ty, false);
+            this -> FillCell(cell -> background, tx, ty, true);
+        }
     }
 }
 
