@@ -71,9 +71,8 @@ WORD GetAttributes(Color foreground, Color background) {
 #include <termios.h>
 #include <unistd.h>
 
-string Console::foregroundBegin;
-string Console::backgroundBegin;
-string Console::colorEnd;
+int Console::foregroundBegin;
+int Console::backgroundBegin;
 #endif
 
 Screen* Console::GetScreen() {
@@ -115,36 +114,40 @@ void Console::SetColor(Color foreground, Color background) {
     SetConsoleTextAttribute(hStdout,
         GetAttributes(foreground, background));
 #else
-    colorEnd = "\x1B[0m";
     switch (foreground) {
     default: case NONE:
-        foregroundBegin = "";
+        foregroundBegin = 0;
         break;
-    case WHITE: foregroundBegin = "\x1B[97"; break;
-    case GREY: foregroundBegin = "\x1B[90"; break;
-    case BLACK: foregroundBegin = "\x1B[30"; break;
-    case BLUE: foregroundBegin = "\x1B[94"; break;
-    case CYAN: foregroundBegin = "\x1B[96"; break;
-    case GREEN: foregroundBegin = "\x1B[92"; break;
-    case MAGENTA: foregroundBegin = "\x1B[95"; break;
-    case RED: foregroundBegin = "\x1B[91"; break;
-    case YELLOW: foregroundBegin = "\x1B[93"; break;
+    case WHITE: foregroundBegin = 97; break;
+    case GREY: foregroundBegin = 90; break;
+    case BLACK: foregroundBegin = 30; break;
+    case BLUE: foregroundBegin = 94; break;
+    case CYAN: foregroundBegin = 96; break;
+    case GREEN: foregroundBegin = 92; break;
+    case MAGENTA: foregroundBegin = 95; break;
+    case RED: foregroundBegin = 91; break;
+    case YELLOW: foregroundBegin = 93; break;
     }
     switch (background) {
     default: case NONE:
-        backgroundBegin = "";
+        backgroundBegin = 0;
         break;
-    case WHITE: backgroundBegin = ";47m"; break;
-    case GREY: backgroundBegin = ";47m"; break;
-    case BLACK: backgroundBegin = ";40m"; break;
-    case BLUE: backgroundBegin = ";44m"; break;
-    case CYAN: backgroundBegin = ";46m"; break;
-    case GREEN: backgroundBegin = ";42m"; break;
-    case MAGENTA: backgroundBegin = ";45m"; break;
-    case RED: backgroundBegin = ";41m"; break;
-    case YELLOW: backgroundBegin = ";43m"; break;
+    case WHITE: backgroundBegin = 47; break;
+    case GREY: backgroundBegin = 47; break;
+    case BLACK: backgroundBegin = 40; break;
+    case BLUE: backgroundBegin = 44; break;
+    case CYAN: backgroundBegin = 46; break;
+    case GREEN: backgroundBegin = 42; break;
+    case MAGENTA: backgroundBegin = 45; break;
+    case RED: backgroundBegin = 41; break;
+    case YELLOW: backgroundBegin = 43; break;
     }
-    cout << foregroundBegin << backgroundBegin;
+    cout << "\x1B[";
+    if (foregroundBegin != 0)
+        cout << foregroundBegin;
+    if (backgroundBegin != 0)
+        cout << ';' << backgroundBegin;
+    cout << "m";
 #endif
 }
 
@@ -152,7 +155,7 @@ void Console::UnsetColor() {
 #ifdef _WIN32
     SetConsoleTextAttribute(hStdout, oldAttributes);
 #else
-    cout << colorEnd;
+    cout << "\x1B[0m";
 #endif
 }
 

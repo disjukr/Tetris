@@ -2,9 +2,8 @@
 
 class Console {
 #ifndef _WIN32
-    static std::string foregroundBegin;
-    static std::string backgroundBegin;
-    static std::string colorEnd;
+    static int foregroundBegin;
+    static int backgroundBegin;
 #endif
     static Screen screen;
     static Screen prevScreen;
