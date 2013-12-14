@@ -51,5 +51,8 @@
     <None Include="Keyboard.hh">
       <Filter>Header</Filter>
     </None>
+    <None Include="Tetromino.hh">
+      <Filter>Header</Filter>
+    </None>
   </ItemGroup>
 </Project>

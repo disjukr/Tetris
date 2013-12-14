@@ -79,6 +79,7 @@
     <None Include="Keyboard.hh" />
     <None Include="Screen.hh" />
     <None Include="Tetris.hh" />
+    <None Include="Tetromino.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
