@@ -52,8 +52,8 @@ void Tetris::Start() {
 void Tetris::GameLoop() {
     if (Keyboard::hit()) {
         switch(Keyboard::code()) {
-        case UP: case W: --(currentPiece -> y); break;
-        case DOWN: case S: ++(currentPiece -> y); break;
+        case UP: case W: currentPiece -> RotateCW(); break;
+        case DOWN: case S: currentPiece -> RotateCCW(); break;
         case LEFT: case A: --(currentPiece -> x); break;
         case RIGHT: case D: ++(currentPiece -> x); break;
         case ESC: this -> Exit(); return;
@@ -67,6 +67,7 @@ void Tetris::Render() {
     Screen* stageScreen = this -> stage.GetScreen();
     mainScreen -> Clear(' ', BLACK, GREEN);
     this -> stage.RenderStage();
+    this -> stage.RenderGhostPiece(*currentPiece);
     this -> stage.RenderPiece(*currentPiece);
     mainScreen -> RenderScreen(*stageScreen, 2, 1);
     Console::Update();
@@ -153,7 +154,13 @@ bool TetrisStage::CheckCollision(Tetromino& piece) {
     return false;
 }
 
-bool TetrisStage::AttachTetromino(Tetromino& piece) {
+void TetrisStage::CastPiece(Tetromino& piece) {
+    while (!(this -> CheckCollision(piece)))
+        ++piece.y;
+    --piece.y;
+}
+
+bool TetrisStage::AttachPiece(Tetromino& piece) {
     if (this -> CheckCollision(piece))
         return false;
     for (int i = 0; i < 4; ++i) {
@@ -188,6 +195,14 @@ void TetrisStage::RenderPiece(Tetromino& piece) {
                 this -> RenderBlock(piece.color, x, y);
         }
     }
+}
+
+void TetrisStage::RenderGhostPiece(Tetromino& piece) {
+    Tetromino* ghost = piece.Clone();
+    ghost -> color = GREY;
+    this -> CastPiece(*ghost);
+    this -> RenderPiece(*ghost);
+    delete ghost;
 }
 
 void TetrisStage::RenderBlock(Color color, int x, int y) {

@@ -11,9 +11,11 @@ public:
     TetrisStage();
     ~TetrisStage();
     bool CheckBlock(int x, int y);
-    bool CheckCollision(Tetromino& mino);
-    bool AttachTetromino(Tetromino& mino);
+    bool CheckCollision(Tetromino& piece);
+    void CastPiece(Tetromino& piece);
+    bool AttachPiece(Tetromino& piece);
     void RenderStage();
+    void RenderGhostPiece(Tetromino& piece);
     void RenderPiece(Tetromino& piece);
     void RenderBlock(Color color, int x, int y);
     Screen* GetScreen();
