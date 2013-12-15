@@ -51,13 +51,25 @@ void Tetris::Start() {
 
 void Tetris::GameLoop() {
     if (Keyboard::hit()) {
+        Tetromino* backup = currentPiece -> Clone();
         switch(Keyboard::code()) {
         case UP: case W: currentPiece -> RotateCW(); break;
         case DOWN: case S: currentPiece -> RotateCCW(); break;
         case LEFT: case A: --(currentPiece -> x); break;
         case RIGHT: case D: ++(currentPiece -> x); break;
+        case SPACE:
+            stage.CastPiece(*currentPiece);
+            stage.AttachPiece(*currentPiece);
+            delete currentPiece;
+            currentPiece = pieceGenerator.Get();
+            break;
         case ESC: this -> Exit(); return;
         default: break;
+        }
+        if (stage.CheckCollision(*currentPiece)) {
+            Tetromino* temp = currentPiece;
+            currentPiece = backup;
+            delete temp;
         }
     }
 }
