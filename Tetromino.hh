@@ -2,7 +2,18 @@
 
 class Tetromino {
 public:
+    Tetromino() {
+        color = NONE;
+        x = 0;
+        y = 0;
+    }
+    Tetromino(Tetromino& original) {
+        this -> color = original.color;
+        this -> x = original.x;
+        this -> y = original.y;
+    }
     virtual ~Tetromino() {}
+    virtual Tetromino* Clone() = 0;
     virtual void RotateCW() = 0;
     virtual void RotateCCW() = 0;
     virtual bool CheckBlock(int x, int y) {
@@ -16,13 +27,17 @@ public:
 class IMino: public Tetromino {
     bool vertical;
 public:
-    IMino() {
+    IMino(): Tetromino() {
         vertical = true;
         color = CYAN;
-        x = 0;
-        y = 0;
+    }
+    IMino(IMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
     }
     ~IMino() {}
+    virtual Tetromino* Clone() {
+        return new IMino(*this);
+    }
     virtual void RotateCW() {
         vertical = !vertical;
     }
@@ -41,12 +56,14 @@ public:
 
 class OMino: public Tetromino {
 public:
-    OMino() {
+    OMino(): Tetromino() {
         color = YELLOW;
-        x = 0;
-        y = 0;
     }
+    OMino(OMino& original): Tetromino(original) {}
     ~OMino() {}
+    virtual Tetromino* Clone() {
+        return new OMino(*this);
+    }
     virtual void RotateCW() {}
     virtual void RotateCCW() {}
     virtual bool CheckBlock(int x, int y) {
@@ -60,14 +77,19 @@ class TMino: public Tetromino {
     bool vertical;
     bool tail;
 public:
-    TMino() {
+    TMino(): Tetromino() {
         vertical = true;
         tail = true;
         color = MAGENTA;
-        x = 0;
-        y = 0;
+    }
+    TMino(TMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
+        this -> tail = original.tail;
     }
     ~TMino() {}
+    virtual Tetromino* Clone() {
+        return new TMino(*this);
+    }
     virtual void RotateCW() {
         if (vertical)
             tail = !tail;
@@ -101,13 +123,17 @@ public:
 class SMino: public Tetromino {
     bool vertical;
 public:
-    SMino() {
+    SMino(): Tetromino() {
         vertical = true;
         color = GREEN;
-        x = 0;
-        y = 0;
+    }
+    SMino(SMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
     }
     ~SMino() {}
+    virtual Tetromino* Clone() {
+        return new SMino(*this);
+    }
     virtual void RotateCW() {
         vertical = !vertical;
     }
@@ -129,13 +155,17 @@ public:
 class ZMino: public Tetromino {
     bool vertical;
 public:
-    ZMino() {
+    ZMino(): Tetromino() {
         vertical = true;
         color = RED;
-        x = 0;
-        y = 0;
+    }
+    ZMino(ZMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
     }
     ~ZMino() {}
+    virtual Tetromino* Clone() {
+        return new ZMino(*this);
+    }
     virtual void RotateCW() {
         vertical = !vertical;
     }
@@ -158,14 +188,19 @@ class JMino: public Tetromino {
     bool vertical;
     bool tail;
 public:
-    JMino() {
+    JMino(): Tetromino() {
         vertical = true;
         tail = true;
         color = BLUE;
-        x = 0;
-        y = 0;
+    }
+    JMino(JMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
+        this -> tail = original.tail;
     }
     ~JMino() {}
+    virtual Tetromino* Clone() {
+        return new JMino(*this);
+    }
     virtual void RotateCW() {
         if (vertical)
             tail = !tail;
@@ -203,14 +238,19 @@ class LMino: public Tetromino {
     bool vertical;
     bool tail;
 public:
-    LMino() {
+    LMino(): Tetromino() {
         vertical = true;
         tail = true;
         color = YELLOW;
-        x = 0;
-        y = 0;
+    }
+    LMino(LMino& original): Tetromino(original) {
+        this -> vertical = original.vertical;
+        this -> tail = original.tail;
     }
     ~LMino() {}
+    virtual Tetromino* Clone() {
+        return new LMino(*this);
+    }
     virtual void RotateCW() {
         if (vertical)
             tail = !tail;
