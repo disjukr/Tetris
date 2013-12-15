@@ -115,7 +115,7 @@ Tetromino* PieceGenerator::Get() {
         break;
     }
     piece -> x = 3;
-    piece -> y = 0;
+    piece -> y = -2;
     return piece;
 }
 
@@ -131,18 +131,19 @@ TetrisStage::~TetrisStage() {
 }
 
 bool TetrisStage::CheckOutOfRange(int x, int y) {
-    if (x < 0 || x >= 10 || y < 0 || y >= 22)
-        return true;
-    else
-        return false;
+    return x < 0 || x >= 10 || y >= 22;
+}
+
+bool TetrisStage::CheckOutOfMap(int x, int y) {
+    return this -> CheckOutOfRange(x, y) || y < 0;
 }
 
 Color TetrisStage::ReadBlock(int x, int y) {
-    return this -> CheckOutOfRange(x, y) ? NONE : map[y][x];
+    return this -> CheckOutOfMap(x, y) ? NONE : map[y][x];
 }
 
 void TetrisStage::WriteBlock(Color color, int x, int y) {
-    if (this -> CheckOutOfRange(x, y))
+    if (this -> CheckOutOfMap(x, y))
         return;
     map[y][x] = color;
 }
@@ -196,6 +197,8 @@ void TetrisStage::RenderStage() {
             this -> RenderBlock(color == NONE ? BLACK : color, x, y);
         }
     }
+    this -> screen -> WriteLine("____________________", 0, 1);
+    this -> screen -> FillLine(RED, 0, 1, 20, false);
 }
 
 void TetrisStage::RenderPiece(Tetromino& piece) {

@@ -5,6 +5,7 @@ class TetrisStage {
     Color map[22][10];
     Screen* screen;
     bool CheckOutOfRange(int x, int y);
+    bool CheckOutOfMap(int x, int y);
     Color ReadBlock(int x, int y);
     void WriteBlock(Color color, int x, int y);
 public:
