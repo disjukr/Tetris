@@ -21,6 +21,7 @@ void gettimeofday(struct timeval* tv, int* tz) {
 }
 
 #else
+#include <cstddef>
 #include <sys/time.h>
 
 #endif

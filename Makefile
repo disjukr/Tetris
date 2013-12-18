@@ -7,7 +7,7 @@ TARGET = Tetris
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) -o $@ $^
+	$(CC) -std=c++0x -o $@ $^
 
 clean:
 	rm -f *.o *.d $(TARGET)
