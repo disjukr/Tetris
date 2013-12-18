@@ -1,4 +1,4 @@
-CC = g++
+CC = g++ -std=c++0x
 SRCS = main.cc Tetris.cc Time.cc Screen.cc Console.cc Keyboard.cc
 OBJS = $(SRCS:.cc=.o)
 DEPS = $(OBJS:.o=.d)
@@ -7,7 +7,7 @@ TARGET = Tetris
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) -std=c++0x -o $@ $^
+	$(CC) -o $@ $^
 
 clean:
 	rm -f *.o *.d $(TARGET)
