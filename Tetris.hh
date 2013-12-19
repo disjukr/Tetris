@@ -45,6 +45,7 @@ class Tetris {
     void HardDrop();
     void MovePiece(int x);
     void RotatePiece(bool clockwise);
+    bool CheckGameOver();
 public:
     Tetris();
     ~Tetris();

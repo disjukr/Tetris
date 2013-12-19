@@ -72,6 +72,10 @@ void Tetris::GameLoop() {
         this -> SoftDrop();
         lastDrop = frame;
     }
+    if (this -> CheckGameOver()) {
+        this -> Exit();
+        return;
+    }
 }
 
 void Tetris::Render() {
@@ -125,6 +129,13 @@ void Tetris::RotatePiece(bool clockwise) {
         currentPiece = backup;
         delete temp;
     }
+}
+
+bool Tetris::CheckGameOver() {
+    for (int i = 0; i < 10; ++i)
+        if (this -> stage.CheckBlock(i, 1))
+            return true;
+    return false;
 }
 
 PieceGenerator::PieceGenerator() {}
