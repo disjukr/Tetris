@@ -68,7 +68,7 @@ void Tetris::GameLoop() {
             break;
         }
     }
-    if (dropFrameInterval < frame - lastDrop) {
+    if (dropFrameInterval < (int) (frame - lastDrop)) {
         this -> SoftDrop();
         lastDrop = frame;
     }
