@@ -11,6 +11,8 @@ Tetris::Tetris() {
     this -> exit = false;
     this -> interval = 17;
     this -> frame = 0;
+    this -> dropFrameInterval = 20;
+    this -> lastDrop = this -> frame;
     this -> currentPiece = this -> pieceGenerator.Get();
 }
 
@@ -51,26 +53,24 @@ void Tetris::Start() {
 
 void Tetris::GameLoop() {
     if (Keyboard::hit()) {
-        Tetromino* backup = currentPiece -> Clone();
         switch(Keyboard::code()) {
-        case UP: case W: currentPiece -> RotateCW(); break;
-        case DOWN: case S: currentPiece -> RotateCCW(); break;
-        case LEFT: case A: --(currentPiece -> x); break;
-        case RIGHT: case D: ++(currentPiece -> x); break;
+        case UP: case W: this -> RotatePiece(true); break;
+        case DOWN: case S: this -> SoftDrop(); break;
+        case LEFT: case A: this -> MovePiece(-1); break;
+        case RIGHT: case D: this -> MovePiece(1); break;
         case SPACE:
-            stage.CastPiece(*currentPiece);
-            stage.AttachPiece(*currentPiece);
-            delete currentPiece;
-            currentPiece = pieceGenerator.Get();
+            this -> HardDrop();
             break;
-        case ESC: this -> Exit(); return;
-        default: break;
+        case ESC:
+            this -> Exit();
+            return;
+        default:
+            break;
         }
-        if (stage.CheckCollision(*currentPiece)) {
-            Tetromino* temp = currentPiece;
-            currentPiece = backup;
-            delete temp;
-        }
+    }
+    if (dropFrameInterval < frame - lastDrop) {
+        this -> SoftDrop();
+        lastDrop = frame;
     }
 }
 
@@ -83,6 +83,48 @@ void Tetris::Render() {
     this -> stage.RenderPiece(*currentPiece);
     mainScreen -> RenderScreen(*stageScreen, 2, 1);
     Console::Update();
+}
+
+void Tetris::AttachPiece() {
+    stage.AttachPiece(*currentPiece);
+    delete currentPiece;
+    currentPiece = pieceGenerator.Get();
+}
+
+void Tetris::SoftDrop() {
+    ++(this -> currentPiece -> y);
+    if (stage.CheckCollision(*currentPiece)) {
+        --(this -> currentPiece -> y);
+        this -> AttachPiece();
+    }
+}
+
+void Tetris::HardDrop() {
+    stage.CastPiece(*currentPiece);
+    this -> AttachPiece();
+}
+
+void Tetris::MovePiece(int x) {
+    Tetromino* backup = currentPiece -> Clone();
+    currentPiece -> x += x;
+    if (stage.CheckCollision(*currentPiece)) {
+        Tetromino* temp = currentPiece;
+        currentPiece = backup;
+        delete temp;
+    }
+}
+
+void Tetris::RotatePiece(bool clockwise) {
+    Tetromino* backup = currentPiece -> Clone();
+    if (clockwise)
+        currentPiece -> RotateCW();
+    else
+        currentPiece -> RotateCCW();
+    if (stage.CheckCollision(*currentPiece)) {
+        Tetromino* temp = currentPiece;
+        currentPiece = backup;
+        delete temp;
+    }
 }
 
 PieceGenerator::PieceGenerator() {}

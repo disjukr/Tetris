@@ -33,11 +33,18 @@ class Tetris {
     bool exit;
     int interval;
     unsigned int frame;
+    int dropFrameInterval;
+    int lastDrop;
     TetrisStage stage;
     PieceGenerator pieceGenerator;
     Tetromino* currentPiece;
     void GameLoop();
     void Render();
+    void AttachPiece();
+    void SoftDrop();
+    void HardDrop();
+    void MovePiece(int x);
+    void RotatePiece(bool clockwise);
 public:
     Tetris();
     ~Tetris();
