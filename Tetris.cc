@@ -109,26 +109,34 @@ void Tetris::HardDrop() {
 }
 
 void Tetris::MovePiece(int x) {
+    Tetromino* trash;
     Tetromino* backup = currentPiece -> Clone();
     currentPiece -> x += x;
     if (stage.CheckCollision(*currentPiece)) {
-        Tetromino* temp = currentPiece;
+        trash = currentPiece;
         currentPiece = backup;
-        delete temp;
     }
+    else {
+        trash = backup;
+    }
+    delete trash;
 }
 
 void Tetris::RotatePiece(bool clockwise) {
+    Tetromino* trash;
     Tetromino* backup = currentPiece -> Clone();
     if (clockwise)
         currentPiece -> RotateCW();
     else
         currentPiece -> RotateCCW();
     if (stage.CheckCollision(*currentPiece)) {
-        Tetromino* temp = currentPiece;
+        trash = currentPiece;
         currentPiece = backup;
-        delete temp;
     }
+    else {
+        trash = backup;
+    }
+    delete trash;
 }
 
 bool Tetris::CheckGameOver() {
