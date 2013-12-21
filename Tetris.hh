@@ -14,11 +14,12 @@ public:
     bool CheckBlock(int x, int y);
     bool CheckCollision(Tetromino& piece);
     void CastPiece(Tetromino& piece);
-    bool AttachPiece(Tetromino& piece);
+    void AttachPiece(Tetromino& piece);
     void RenderStage();
     void RenderGhostPiece(Tetromino& piece);
     void RenderPiece(Tetromino& piece);
     void RenderBlock(Color color, int x, int y);
+    void HighlightLine(int y);
     Screen* GetScreen();
 };
 
@@ -46,6 +47,7 @@ class Tetris {
     void MovePiece(int x);
     void RotatePiece(bool clockwise);
     bool CheckGameOver();
+    bool CheckLine(int y);
 public:
     Tetris();
     ~Tetris();

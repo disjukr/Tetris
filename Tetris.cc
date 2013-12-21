@@ -85,6 +85,10 @@ void Tetris::Render() {
     this -> stage.RenderStage();
     this -> stage.RenderGhostPiece(*currentPiece);
     this -> stage.RenderPiece(*currentPiece);
+    for (int i = 0; i < 22; ++i) {
+        if (this -> CheckLine(i))
+            this -> stage.HighlightLine(i);
+    }
     mainScreen -> RenderScreen(*stageScreen, 2, 1);
     Console::Update();
 }
@@ -144,6 +148,13 @@ bool Tetris::CheckGameOver() {
         if (this -> stage.CheckBlock(i, 1))
             return true;
     return false;
+}
+
+bool Tetris::CheckLine(int y) {
+    for (int i = 0; i < 10; ++i)
+        if (!(this -> stage.CheckBlock(i, y)))
+            return false;
+    return true;
 }
 
 PieceGenerator::PieceGenerator() {}
@@ -234,9 +245,7 @@ void TetrisStage::CastPiece(Tetromino& piece) {
     --piece.y;
 }
 
-bool TetrisStage::AttachPiece(Tetromino& piece) {
-    if (this -> CheckCollision(piece))
-        return false;
+void TetrisStage::AttachPiece(Tetromino& piece) {
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             if (piece.CheckBlock(i, j)) {
@@ -246,10 +255,10 @@ bool TetrisStage::AttachPiece(Tetromino& piece) {
             }
         }
     }
-    return true;
 }
 
 void TetrisStage::RenderStage() {
+    // render map
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 22; ++j) {
             int x = i;
@@ -258,6 +267,7 @@ void TetrisStage::RenderStage() {
             this -> RenderBlock(color == NONE ? BLACK : color, x, y);
         }
     }
+    // render dead line
     this -> screen -> WriteLine("____________________", 0, 1);
     this -> screen -> FillLine(RED, 0, 1, 20, false);
 }
@@ -284,6 +294,11 @@ void TetrisStage::RenderGhostPiece(Tetromino& piece) {
 void TetrisStage::RenderBlock(Color color, int x, int y) {
     this -> screen -> FillCell(color, x * 2, y, true);
     this -> screen -> FillCell(color, x * 2 + 1, y, true);
+}
+
+void TetrisStage::HighlightLine(int y) {
+    for (int i = 0; i < 10; ++i)
+        this -> RenderBlock(WHITE, i, y);
 }
 
 Screen* TetrisStage::GetScreen() {
