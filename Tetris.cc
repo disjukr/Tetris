@@ -127,6 +127,7 @@ void Tetris::HardDrop() {
 }
 
 void Tetris::ControlPiece(std::function<void()> controlFunction) {
+    // try control
     Tetromino* trash;
     Tetromino* backup = currentPiece -> Clone();
     controlFunction();
@@ -138,6 +139,11 @@ void Tetris::ControlPiece(std::function<void()> controlFunction) {
         trash = backup;
     }
     delete trash;
+    // infinity rule
+    ++(currentPiece -> y);
+    if (stage.CheckCollision(*currentPiece))
+        lastDrop = frame;
+    --(currentPiece -> y);
 }
 
 bool Tetris::CheckGameOver() {
