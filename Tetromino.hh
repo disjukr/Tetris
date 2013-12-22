@@ -12,12 +12,13 @@ public:
         this -> x = original.x;
         this -> y = original.y;
     }
+    static const int size = 4;
     virtual ~Tetromino() {}
     virtual Tetromino* Clone() = 0;
     virtual void RotateCW() = 0;
     virtual void RotateCCW() = 0;
     virtual bool CheckBlock(int x, int y) {
-        return !(x < 0 || x > 3 || y < 0 || y > 3);
+        return !(x < 0 || x >= size || y < 0 || y >= size);
     }
     Color color;
     int x;

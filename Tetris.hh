@@ -1,8 +1,13 @@
 #include "Console.hh"
 #include "Tetromino.hh"
+#include <functional>
 
 class TetrisStage {
-    Color map[22][10];
+public:
+    static const int width = 10;
+    static const int height = 22;
+private:
+    Color map[height][width];
     Screen* screen;
     bool CheckOutOfRange(int x, int y);
     bool CheckOutOfMap(int x, int y);
@@ -44,8 +49,7 @@ class Tetris {
     void AttachPiece();
     void SoftDrop();
     void HardDrop();
-    void MovePiece(int x);
-    void RotatePiece(bool clockwise);
+    void ControlPiece(std::function<void()> controlFunction);
     bool CheckGameOver();
     bool CheckLine(int y);
 public:

@@ -54,10 +54,24 @@ void Tetris::Start() {
 void Tetris::GameLoop() {
     if (Keyboard::hit()) {
         switch(Keyboard::code()) {
-        case UP: case W: this -> RotatePiece(true); break;
-        case DOWN: case S: this -> SoftDrop(); break;
-        case LEFT: case A: this -> MovePiece(-1); break;
-        case RIGHT: case D: this -> MovePiece(1); break;
+        case UP: case W:
+            this -> ControlPiece([this]() {
+                currentPiece -> RotateCW();
+            });
+            break;
+        case DOWN: case S:
+            this -> SoftDrop();
+            break;
+        case LEFT: case A:
+            this -> ControlPiece([this]() {
+                --(currentPiece -> x);
+            });
+            break;
+        case RIGHT: case D:
+            this -> ControlPiece([this]() {
+                ++(currentPiece -> x);
+            });
+            break;
         case SPACE:
             this -> HardDrop();
             break;
@@ -85,7 +99,7 @@ void Tetris::Render() {
     this -> stage.RenderStage();
     this -> stage.RenderGhostPiece(*currentPiece);
     this -> stage.RenderPiece(*currentPiece);
-    for (int i = 0; i < 22; ++i) {
+    for (int i = 0; i < TetrisStage::height; ++i) {
         if (this -> CheckLine(i))
             this -> stage.HighlightLine(i);
     }
@@ -112,27 +126,10 @@ void Tetris::HardDrop() {
     this -> AttachPiece();
 }
 
-void Tetris::MovePiece(int x) {
+void Tetris::ControlPiece(std::function<void()> controlFunction) {
     Tetromino* trash;
     Tetromino* backup = currentPiece -> Clone();
-    currentPiece -> x += x;
-    if (stage.CheckCollision(*currentPiece)) {
-        trash = currentPiece;
-        currentPiece = backup;
-    }
-    else {
-        trash = backup;
-    }
-    delete trash;
-}
-
-void Tetris::RotatePiece(bool clockwise) {
-    Tetromino* trash;
-    Tetromino* backup = currentPiece -> Clone();
-    if (clockwise)
-        currentPiece -> RotateCW();
-    else
-        currentPiece -> RotateCCW();
+    controlFunction();
     if (stage.CheckCollision(*currentPiece)) {
         trash = currentPiece;
         currentPiece = backup;
@@ -144,14 +141,14 @@ void Tetris::RotatePiece(bool clockwise) {
 }
 
 bool Tetris::CheckGameOver() {
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < TetrisStage::width; ++i)
         if (this -> stage.CheckBlock(i, 1))
             return true;
     return false;
 }
 
 bool Tetris::CheckLine(int y) {
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < TetrisStage::width; ++i)
         if (!(this -> stage.CheckBlock(i, y)))
             return false;
     return true;
@@ -186,16 +183,16 @@ Tetromino* PieceGenerator::Get() {
         piece = new LMino();
         break;
     }
-    piece -> x = 3;
-    piece -> y = -2;
+    piece -> x = (TetrisStage::width - Tetromino::size) / 2;
+    piece -> y = -(Tetromino::size / 2);
     return piece;
 }
 
 TetrisStage::TetrisStage() {
-    for (int i = 0; i < 10; ++i)
-        for (int j = 0; j < 22; ++j)
+    for (int i = 0; i < width; ++i)
+        for (int j = 0; j < height; ++j)
             WriteBlock(NONE, i, j);
-    this -> screen = new Screen(20, 22);
+    this -> screen = new Screen(width * 2, height);
 }
 
 TetrisStage::~TetrisStage() {
@@ -203,7 +200,7 @@ TetrisStage::~TetrisStage() {
 }
 
 bool TetrisStage::CheckOutOfRange(int x, int y) {
-    return x < 0 || x >= 10 || y >= 22;
+    return x < 0 || x >= width || y >= height;
 }
 
 bool TetrisStage::CheckOutOfMap(int x, int y) {
@@ -225,8 +222,8 @@ bool TetrisStage::CheckBlock(int x, int y) {
 }
 
 bool TetrisStage::CheckCollision(Tetromino& piece) {
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < Tetromino::size; ++i) {
+        for (int j = 0; j < Tetromino::size; ++j) {
             if (piece.CheckBlock(i, j)) {
                 int x = i + piece.x;
                 int y = j + piece.y;
@@ -246,8 +243,8 @@ void TetrisStage::CastPiece(Tetromino& piece) {
 }
 
 void TetrisStage::AttachPiece(Tetromino& piece) {
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < Tetromino::size; ++i) {
+        for (int j = 0; j < Tetromino::size; ++j) {
             if (piece.CheckBlock(i, j)) {
                 int x = i + piece.x;
                 int y = j + piece.y;
@@ -259,8 +256,8 @@ void TetrisStage::AttachPiece(Tetromino& piece) {
 
 void TetrisStage::RenderStage() {
     // render map
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 22; ++j) {
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
             int x = i;
             int y = j;
             Color color = this -> ReadBlock(i, j);
@@ -269,12 +266,12 @@ void TetrisStage::RenderStage() {
     }
     // render dead line
     this -> screen -> WriteLine("____________________", 0, 1);
-    this -> screen -> FillLine(RED, 0, 1, 20, false);
+    this -> screen -> FillLine(RED, 0, 1, width * 2, false);
 }
 
 void TetrisStage::RenderPiece(Tetromino& piece) {
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < Tetromino::size; ++i) {
+        for (int j = 0; j < Tetromino::size; ++j) {
             int x = i + piece.x;
             int y = j + piece.y;
             if (piece.CheckBlock(i, j))
@@ -297,7 +294,7 @@ void TetrisStage::RenderBlock(Color color, int x, int y) {
 }
 
 void TetrisStage::HighlightLine(int y) {
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < width; ++i)
         this -> RenderBlock(WHITE, i, y);
 }
 
