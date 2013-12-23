@@ -102,10 +102,6 @@ void Tetris::Render() {
     this -> stage.RenderStage();
     this -> stage.RenderGhostPiece(*currentPiece);
     this -> stage.RenderPiece(*currentPiece);
-    for (int i = 0; i < TetrisStage::height; ++i) {
-        if (this -> CheckLine(i))
-            this -> stage.HighlightLine(i);
-    }
     mainScreen -> RenderScreen(*stageScreen, 2, 1);
     Console::Update();
 }
