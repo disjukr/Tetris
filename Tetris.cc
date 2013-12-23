@@ -60,7 +60,9 @@ void Tetris::GameLoop() {
             });
             break;
         case DOWN: case S:
-            this -> SoftDrop();
+            this -> ControlPiece([this]() {
+                ++(currentPiece -> y);
+            });
             break;
         case LEFT: case A:
             this -> ControlPiece([this]() {
