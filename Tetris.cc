@@ -90,6 +90,9 @@ void Tetris::GameLoop() {
         this -> Exit();
         return;
     }
+    for (int i = 0; i < TetrisStage::height; ++i)
+        if (this -> CheckLine(i))
+            this -> stage.EraseLine(i);
 }
 
 void Tetris::Render() {
@@ -302,6 +305,12 @@ void TetrisStage::RenderBlock(Color color, int x, int y) {
 void TetrisStage::HighlightLine(int y) {
     for (int i = 0; i < width; ++i)
         this -> RenderBlock(WHITE, i, y);
+}
+
+void TetrisStage::EraseLine(int y) {
+    for (int j = y; j >= 0; --j)
+        for (int i = 0; i < width; ++i)
+            this -> WriteBlock(this -> ReadBlock(i, j - 1), i, j);
 }
 
 Screen* TetrisStage::GetScreen() {

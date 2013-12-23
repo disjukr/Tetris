@@ -25,6 +25,7 @@ public:
     void RenderPiece(Tetromino& piece);
     void RenderBlock(Color color, int x, int y);
     void HighlightLine(int y);
+    void EraseLine(int y);
     Screen* GetScreen();
 };
 
