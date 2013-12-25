@@ -29,6 +29,9 @@
     <ClCompile Include="Keyboard.cc">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Randomizer.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Time.hh">
@@ -52,6 +55,9 @@
       <Filter>Header</Filter>
     </None>
     <None Include="Tetromino.hh">
+      <Filter>Header</Filter>
+    </None>
+    <None Include="Randomizer.hh">
       <Filter>Header</Filter>
     </None>
   </ItemGroup>

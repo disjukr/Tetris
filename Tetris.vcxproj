@@ -66,6 +66,7 @@
     <ClCompile Include="Console.cc" />
     <ClCompile Include="Keyboard.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="Randomizer.cc" />
     <ClCompile Include="Screen.cc" />
     <ClCompile Include="Tetris.cc" />
     <ClCompile Include="Time.cc" />
@@ -77,6 +78,7 @@
     <None Include="Color.hh" />
     <None Include="Console.hh" />
     <None Include="Keyboard.hh" />
+    <None Include="Randomizer.hh" />
     <None Include="Screen.hh" />
     <None Include="Tetris.hh" />
     <None Include="Tetromino.hh" />

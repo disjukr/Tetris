@@ -15,10 +15,10 @@ class Lfsr113: public RandomGenerator {
     unsigned int b;
     unsigned int c;
     unsigned int d;
-    const int IA = 16807;
-    const int IM = 2147483647;
-    const int IQ = 127773;
-    const int IR = 2836;
+    static const int IA = 16807;
+    static const int IM = 2147483647;
+    static const int IQ = 127773;
+    static const int IR = 2836;
 public:
     Lfsr113() {
         this -> Set(0xABCDEF);
