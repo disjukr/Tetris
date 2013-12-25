@@ -1,5 +1,6 @@
 CC = g++ -std=c++0x
-SRCS = main.cc Tetris.cc Time.cc Screen.cc Console.cc Keyboard.cc
+SRCS = main.cc Tetris.cc Randomizer.cc \
+	Time.cc Screen.cc Console.cc Keyboard.cc
 OBJS = $(SRCS:.cc=.o)
 DEPS = $(OBJS:.o=.d)
 TARGET = Tetris

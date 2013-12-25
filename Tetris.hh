@@ -1,5 +1,6 @@
 #include "Console.hh"
 #include "Tetromino.hh"
+#include "Randomizer.hh"
 #include <functional>
 
 class TetrisStage {
@@ -30,13 +31,6 @@ public:
     Screen* GetScreen();
 };
 
-class PieceGenerator {
-public:
-    PieceGenerator();
-    ~PieceGenerator();
-    Tetromino* Get();
-};
-
 class Tetris {
     bool exit;
     int interval;
@@ -49,6 +43,7 @@ class Tetris {
     void GameLoop();
     void Render();
     void AttachPiece();
+    Tetromino* EmitPiece();
     void SoftDrop();
     void HardDrop();
     void ControlPiece(std::function<void()> controlFunction);

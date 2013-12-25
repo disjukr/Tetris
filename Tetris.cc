@@ -1,9 +1,9 @@
 #include "Tetris.hh"
 
-#include <cstdlib>
 #include <iostream>
 #include "Time.hh"
 #include "Keyboard.hh"
+#include "Randomizer.hh"
 
 using namespace std;
 
@@ -13,7 +13,7 @@ Tetris::Tetris() {
     this -> frame = 0;
     this -> dropFrameInterval = 20;
     this -> lastDrop = this -> frame;
-    this -> currentPiece = this -> pieceGenerator.Get();
+    this -> currentPiece = this -> EmitPiece();
 }
 
 Tetris::~Tetris() {
@@ -108,7 +108,14 @@ void Tetris::Render() {
 void Tetris::AttachPiece() {
     stage.AttachPiece(*currentPiece);
     delete currentPiece;
-    currentPiece = pieceGenerator.Get();
+    currentPiece = this -> EmitPiece();
+}
+
+Tetromino* Tetris::EmitPiece() {
+    Tetromino* piece = pieceGenerator.Get();
+    piece -> x = (TetrisStage::width - Tetromino::size) / 2;
+    piece -> y = -(Tetromino::size / 2);
+    return piece;
 }
 
 void Tetris::SoftDrop() {
@@ -156,40 +163,6 @@ bool Tetris::CheckLine(int y) {
         if (!(this -> stage.CheckBlock(i, y)))
             return false;
     return true;
-}
-
-PieceGenerator::PieceGenerator() {}
-
-PieceGenerator::~PieceGenerator() {}
-
-Tetromino* PieceGenerator::Get() {
-    Tetromino* piece;
-    switch (rand() & 7) {
-    case 0:
-        piece = new IMino();
-        break;
-    case 1:
-        piece = new OMino();
-        break;
-    case 2:
-        piece = new TMino();
-        break;
-    case 3:
-        piece = new SMino();
-        break;
-    case 4:
-        piece = new ZMino();
-        break;
-    case 5:
-        piece = new JMino();
-        break;
-    default:
-        piece = new LMino();
-        break;
-    }
-    piece -> x = (TetrisStage::width - Tetromino::size) / 2;
-    piece -> y = -(Tetromino::size / 2);
-    return piece;
 }
 
 TetrisStage::TetrisStage() {
