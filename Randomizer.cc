@@ -1,6 +1,10 @@
 #include "Randomizer.hh"
 
-#include <cstdlib>
+#include <cmath>
+
+int RandomGenerator::Get(int min, int max) {
+    return (int) std::floor(this -> Get() * (max - min + 1)) + min;
+}
 
 PieceGenerator::PieceGenerator() {}
 
@@ -8,7 +12,7 @@ PieceGenerator::~PieceGenerator() {}
 
 Tetromino* PieceGenerator::Get() {
     Tetromino* piece;
-    switch (rand() & 7) {
+    switch (this -> random.Get(0, 7)) {
     case 0:
         piece = new IMino();
         break;
