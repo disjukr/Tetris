@@ -99,12 +99,9 @@ void Tetris::GameLoop() {
 
 void Tetris::Render() {
     Screen* mainScreen = Console::GetScreen();
-    Screen* stageScreen = this -> stage.GetScreen();
     mainScreen -> Clear(' ', BLACK, GREEN);
-    this -> stage.RenderStage();
-    this -> stage.RenderGhostPiece(*currentPiece);
-    this -> stage.RenderPiece(*currentPiece);
-    mainScreen -> RenderScreen(*stageScreen, 2, 1);
+    stage.Render(*currentPiece, true);
+    mainScreen -> RenderScreen(*stage.GetScreen(), 2, 1);
     Console::Update();
 }
 
@@ -259,6 +256,13 @@ void TetrisStage::AttachPiece(Tetromino& piece) {
             }
         }
     }
+}
+
+void TetrisStage::Render(Tetromino& piece, bool renderGhost) {
+    this -> RenderStage();
+    if (renderGhost)
+        this -> RenderGhostPiece(piece);
+    this -> RenderPiece(piece);
 }
 
 void TetrisStage::RenderStage() {

@@ -13,6 +13,10 @@ private:
     bool CheckOutOfMap(int x, int y);
     Color ReadBlock(int x, int y);
     void WriteBlock(Color color, int x, int y);
+    void RenderStage();
+    void RenderGhostPiece(Tetromino& piece);
+    void RenderPiece(Tetromino& piece);
+    void RenderBlock(Color color, int x, int y);
 public:
     TetrisStage();
     ~TetrisStage();
@@ -20,10 +24,7 @@ public:
     bool CheckCollision(Tetromino& piece);
     void CastPiece(Tetromino& piece);
     void AttachPiece(Tetromino& piece);
-    void RenderStage();
-    void RenderGhostPiece(Tetromino& piece);
-    void RenderPiece(Tetromino& piece);
-    void RenderBlock(Color color, int x, int y);
+    void Render(Tetromino& piece, bool renderGhost);
     void HighlightLine(int y);
     void EraseLine(int y);
     Screen* GetScreen();
