@@ -13,11 +13,13 @@ Tetris::Tetris() {
     this -> frame = 0;
     this -> dropFrameInterval = 20;
     this -> lastDrop = this -> frame;
+    this -> pieceGenerator = new TGM2Randomizer();
     this -> currentPiece = this -> EmitPiece();
 }
 
 Tetris::~Tetris() {
     delete this -> currentPiece;
+    delete this -> pieceGenerator;
 }
 
 void Tetris::SetFps(int fps) {
@@ -112,7 +114,7 @@ void Tetris::AttachPiece() {
 }
 
 Tetromino* Tetris::EmitPiece() {
-    Tetromino* piece = pieceGenerator.Get();
+    Tetromino* piece = pieceGenerator -> Get();
     piece -> x = (TetrisStage::width - Tetromino::size) / 2;
     piece -> y = -(Tetromino::size / 2);
     return piece;

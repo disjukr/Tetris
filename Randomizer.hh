@@ -66,3 +66,24 @@ public:
     virtual ~PieceGenerator();
     virtual Tetromino* Get();
 };
+
+class TGM2Randomizer: public PieceGenerator {
+    Lfsr113 random;
+    bool first;
+    int pos;
+    static const int historySize = 4;
+    static const int tryCount = 6;
+    static const int I = 0;
+    static const int T = 1;
+    static const int J = 2;
+    static const int L = 3;
+    static const int O = 4;
+    static const int S = 5;
+    static const int Z = 6;
+    int history[historySize];
+    bool CheckHistory(int pieceType);
+public:
+    TGM2Randomizer();
+    ~TGM2Randomizer();
+    virtual Tetromino* Get();
+};

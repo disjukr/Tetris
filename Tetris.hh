@@ -38,7 +38,7 @@ class Tetris {
     int dropFrameInterval;
     int lastDrop;
     TetrisStage stage;
-    PieceGenerator pieceGenerator;
+    PieceGenerator* pieceGenerator;
     Tetromino* currentPiece;
     void GameLoop();
     void Render();
