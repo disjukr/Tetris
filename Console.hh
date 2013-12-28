@@ -1,10 +1,6 @@
 #include "Screen.hh"
 
 class Console {
-#ifndef _WIN32
-    static int foregroundBegin;
-    static int backgroundBegin;
-#endif
     static Screen screen;
     static Screen prevScreen;
     static void SetColor(Color foreground, Color background);

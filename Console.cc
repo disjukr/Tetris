@@ -71,8 +71,6 @@ WORD GetAttributes(Color foreground, Color background) {
 #include <termios.h>
 #include <unistd.h>
 
-int Console::foregroundBegin;
-int Console::backgroundBegin;
 #endif
 
 Screen* Console::GetScreen() {
@@ -114,6 +112,8 @@ void Console::SetColor(Color foreground, Color background) {
     SetConsoleTextAttribute(hStdout,
         GetAttributes(foreground, background));
 #else
+    int foregroundBegin;
+    int backgroundBegin;
     switch (foreground) {
     default: case NONE:
         foregroundBegin = 0;
