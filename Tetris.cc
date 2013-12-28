@@ -14,12 +14,17 @@ Tetris::Tetris() {
     this -> dropFrameInterval = 20;
     this -> lastDrop = this -> frame;
     this -> pieceGenerator = new TGM2Randomizer();
+    this -> queueScreen = new Screen(
+        Tetromino::size * 2, (Tetromino::size + 1) * pieceQueueSize);
+    for (int i = 0; i < pieceQueueSize; ++i)
+        this -> pieceQueue.push_back(pieceGenerator -> Get());
     this -> currentPiece = this -> EmitPiece();
 }
 
 Tetris::~Tetris() {
     delete this -> currentPiece;
     delete this -> pieceGenerator;
+    delete this -> queueScreen;
 }
 
 void Tetris::SetFps(int fps) {
@@ -101,23 +106,49 @@ void Tetris::GameLoop() {
 
 void Tetris::Render() {
     Screen* mainScreen = Console::GetScreen();
+    Screen* stageScreen = stage.GetScreen();
     mainScreen -> Clear(' ', BLACK, GREEN);
     stage.Render(*currentPiece, true);
-    mainScreen -> RenderScreen(*stage.GetScreen(), 2, 1);
+    mainScreen -> RenderScreen(*stageScreen, 2, 1);
+    this -> RenderPieceQueue();
+    mainScreen -> RenderScreen(
+        *queueScreen, stageScreen -> GetWidth() + 3, 1);
     Console::Update();
+}
+
+void Tetris::RenderPieceQueue() {
+    int width = queueScreen -> GetWidth();
+    int offset = Tetromino::size + 1;
+    queueScreen -> Clear(' ', BLACK, BLACK);
+    queueScreen -> WriteLine("NEXT", 0, 0);
+    for (int i = 0; i < pieceQueueSize; ++i) {
+        queueScreen -> FillLine(GREEN, 0, i * offset, width, true);
+        PieceRenderer::RenderPiece(
+            *queueScreen, *pieceQueue[i], 0, i * offset + 1);
+    }
+    queueScreen -> FillLine(WHITE, 0, 0, 4, true);
+    queueScreen -> FillLine(BLACK, 0, 0, 4, false);
+}
+
+Tetromino* Tetris::NextPiece() {
+    Tetromino* result;
+    this -> pieceQueue.push_back(pieceGenerator -> Get());
+    result = this -> pieceQueue.front();
+    this -> pieceQueue.pop_front();
+    return result;
+}
+
+Tetromino* Tetris::EmitPiece() {
+    Tetromino* piece = this -> NextPiece();
+    piece -> x = (TetrisStage::width - Tetromino::size) / 2;
+    piece -> y = -(Tetromino::size / 2);
+    return piece;
 }
 
 void Tetris::AttachPiece() {
     stage.AttachPiece(*currentPiece);
     delete currentPiece;
     currentPiece = this -> EmitPiece();
-}
-
-Tetromino* Tetris::EmitPiece() {
-    Tetromino* piece = pieceGenerator -> Get();
-    piece -> x = (TetrisStage::width - Tetromino::size) / 2;
-    piece -> y = -(Tetromino::size / 2);
-    return piece;
 }
 
 void Tetris::SoftDrop() {
@@ -168,9 +199,6 @@ bool Tetris::CheckLine(int y) {
 }
 
 TetrisStage::TetrisStage() {
-    for (int i = 0; i < width; ++i)
-        for (int j = 0; j < height; ++j)
-            WriteBlock(NONE, i, j);
     this -> screen = new Screen(width * 2, height);
 }
 
@@ -244,10 +272,12 @@ void TetrisStage::RenderStage() {
     // render map
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
-            int x = i;
-            int y = j;
             Color color = this -> ReadBlock(i, j);
-            this -> RenderBlock(color == NONE ? BLACK : color, x, y);
+            int x = i * 2;
+            int y = j;
+            color = color == NONE ? BLACK : color;
+            this -> screen -> FillCell(color, x, y, true);
+            this -> screen -> FillCell(color, x + 1, y, true);
         }
     }
     // render dead line
@@ -256,14 +286,7 @@ void TetrisStage::RenderStage() {
 }
 
 void TetrisStage::RenderPiece(Tetromino& piece) {
-    for (int i = 0; i < Tetromino::size; ++i) {
-        for (int j = 0; j < Tetromino::size; ++j) {
-            int x = i + piece.x;
-            int y = j + piece.y;
-            if (piece.CheckBlock(i, j))
-                this -> RenderBlock(piece.color, x, y);
-        }
-    }
+    PieceRenderer::RenderPiece(*(this -> screen), piece, piece.x, piece.y);
 }
 
 void TetrisStage::RenderGhostPiece(Tetromino& piece) {
@@ -272,16 +295,6 @@ void TetrisStage::RenderGhostPiece(Tetromino& piece) {
     this -> CastPiece(*ghost);
     this -> RenderPiece(*ghost);
     delete ghost;
-}
-
-void TetrisStage::RenderBlock(Color color, int x, int y) {
-    this -> screen -> FillCell(color, x * 2, y, true);
-    this -> screen -> FillCell(color, x * 2 + 1, y, true);
-}
-
-void TetrisStage::HighlightLine(int y) {
-    for (int i = 0; i < width; ++i)
-        this -> RenderBlock(WHITE, i, y);
 }
 
 void TetrisStage::EraseLine(int y) {

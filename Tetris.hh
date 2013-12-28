@@ -2,6 +2,7 @@
 #include "Tetromino.hh"
 #include "Randomizer.hh"
 #include <functional>
+#include <deque>
 
 class TetrisStage {
 public:
@@ -17,7 +18,6 @@ private:
     void RenderStage();
     void RenderGhostPiece(Tetromino& piece);
     void RenderPiece(Tetromino& piece);
-    void RenderBlock(Color color, int x, int y);
 public:
     TetrisStage();
     ~TetrisStage();
@@ -26,24 +26,28 @@ public:
     void CastPiece(Tetromino& piece);
     void AttachPiece(Tetromino& piece);
     void Render(Tetromino& piece, bool renderGhost);
-    void HighlightLine(int y);
     void EraseLine(int y);
     Screen* GetScreen();
 };
 
 class Tetris {
+    static const int pieceQueueSize = 4;
     bool exit;
     int interval;
     unsigned int frame;
     int dropFrameInterval;
     int lastDrop;
     TetrisStage stage;
+    Screen* queueScreen;
     PieceGenerator* pieceGenerator;
+    std::deque<Tetromino*> pieceQueue;
     Tetromino* currentPiece;
     void GameLoop();
     void Render();
-    void AttachPiece();
+    void RenderPieceQueue();
+    Tetromino* NextPiece();
     Tetromino* EmitPiece();
+    void AttachPiece();
     void SoftDrop();
     void HardDrop();
     void ControlPiece(std::function<void()> controlFunction);
@@ -55,4 +59,20 @@ public:
     void SetFps(int fps);
     void Start();
     void Exit();
+};
+
+class PieceRenderer {
+public:
+    static void RenderPiece(Screen& screen, Tetromino& piece, int x, int y) {
+        for (int i = 0; i < Tetromino::size; ++i) {
+            for (int j = 0; j < Tetromino::size; ++j) {
+                int tx = (i + x) * 2;
+                int ty = j + y;
+                if (piece.CheckBlock(i, j)) {
+                    screen.FillCell(piece.color, tx, ty, true);
+                    screen.FillCell(piece.color, tx + 1, ty, true);
+                }
+            }
+        }
+    }
 };
