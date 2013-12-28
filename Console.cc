@@ -132,15 +132,15 @@ void Console::SetColor(Color foreground, Color background) {
     default: case NONE:
         backgroundBegin = 0;
         break;
-    case WHITE: backgroundBegin = 47; break;
+    case WHITE: backgroundBegin = 107; break;
     case GREY: backgroundBegin = 47; break;
     case BLACK: backgroundBegin = 40; break;
-    case BLUE: backgroundBegin = 44; break;
-    case CYAN: backgroundBegin = 46; break;
-    case GREEN: backgroundBegin = 42; break;
-    case MAGENTA: backgroundBegin = 45; break;
-    case RED: backgroundBegin = 41; break;
-    case YELLOW: backgroundBegin = 43; break;
+    case BLUE: backgroundBegin = 104; break;
+    case CYAN: backgroundBegin = 106; break;
+    case GREEN: backgroundBegin = 102; break;
+    case MAGENTA: backgroundBegin = 105; break;
+    case RED: backgroundBegin = 101; break;
+    case YELLOW: backgroundBegin = 103; break;
     }
     cout << "\x1B[";
     if (foregroundBegin != 0)
