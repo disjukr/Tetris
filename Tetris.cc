@@ -32,6 +32,8 @@ Tetris::~Tetris() {
     this -> pieceQueue.clear();
     delete this -> queueScreen;
     delete this -> holdPieceScreen;
+    if (this -> holdPiece != NULL)
+        delete this -> holdPiece;
 }
 
 void Tetris::SetFps(int fps) {
