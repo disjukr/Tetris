@@ -24,6 +24,9 @@ Tetris::Tetris() {
 Tetris::~Tetris() {
     delete this -> currentPiece;
     delete this -> pieceGenerator;
+    for (int i = 0; i < pieceQueueSize; ++i)
+        delete this -> pieceQueue[i];
+    this -> pieceQueue.clear();
     delete this -> queueScreen;
 }
 
@@ -199,6 +202,9 @@ bool Tetris::CheckLine(int y) {
 }
 
 TetrisStage::TetrisStage() {
+    for (int i = 0; i < width; ++i)
+        for (int j = 0; j < height; ++j)
+            WriteBlock(NONE, i, j);
     this -> screen = new Screen(width * 2, height);
 }
 
