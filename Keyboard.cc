@@ -69,6 +69,9 @@ Key Keyboard::code() {
         case 'a': case 'A': return A;
         case 's': case 'S': return S;
         case 'd': case 'D': return D;
+        case 'z': case 'Z': return Z;
+        case 'x': case 'X': return X;
+        case 'c': case 'C': return C;
         case ' ': return SPACE;
         }
     }

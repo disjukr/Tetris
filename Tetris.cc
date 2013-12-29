@@ -18,7 +18,10 @@ Tetris::Tetris() {
         Tetromino::size * 2, (Tetromino::size + 1) * pieceQueueSize);
     for (int i = 0; i < pieceQueueSize; ++i)
         this -> pieceQueue.push_back(pieceGenerator -> Get());
+    this -> holdPieceScreen = new Screen(
+        Tetromino::size * 2, Tetromino::size + 1);
     this -> currentPiece = this -> EmitPiece();
+    this -> holdPiece = NULL;
 }
 
 Tetris::~Tetris() {
@@ -28,6 +31,7 @@ Tetris::~Tetris() {
         delete this -> pieceQueue[i];
     this -> pieceQueue.clear();
     delete this -> queueScreen;
+    delete this -> holdPieceScreen;
 }
 
 void Tetris::SetFps(int fps) {
@@ -87,6 +91,9 @@ void Tetris::GameLoop() {
         case SPACE:
             this -> HardDrop();
             break;
+        case Z:
+            this -> HoldPiece();
+            break;
         case ESC:
             this -> Exit();
             return;
@@ -108,14 +115,20 @@ void Tetris::GameLoop() {
 }
 
 void Tetris::Render() {
+    stage.Render(*currentPiece, true);
+    this -> RenderPieceQueue();
+    this -> RenderHoldPiece();
+    int xOffset = 2;
+    int xGap = 1;
+    int ceilOffset = 1;
     Screen* mainScreen = Console::GetScreen();
     Screen* stageScreen = stage.GetScreen();
     mainScreen -> Clear(' ', BLACK, GREEN);
-    stage.Render(*currentPiece, true);
-    mainScreen -> RenderScreen(*stageScreen, 2, 1);
-    this -> RenderPieceQueue();
-    mainScreen -> RenderScreen(
-        *queueScreen, stageScreen -> GetWidth() + 3, 1);
+    mainScreen -> RenderScreen(*holdPieceScreen, xOffset, ceilOffset);
+    xOffset += holdPieceScreen -> GetWidth() + xGap;
+    mainScreen -> RenderScreen(*stageScreen, xOffset, ceilOffset);
+    xOffset += stageScreen -> GetWidth() + xGap;
+    mainScreen -> RenderScreen(*queueScreen, xOffset, ceilOffset);
     Console::Update();
 }
 
@@ -133,6 +146,17 @@ void Tetris::RenderPieceQueue() {
     queueScreen -> FillLine(BLACK, 0, 0, 4, false);
 }
 
+void Tetris::RenderHoldPiece() {
+    holdPieceScreen -> Clear(' ', BLACK, BLACK);
+    holdPieceScreen -> WriteLine("HOLD", 0, 0);
+    holdPieceScreen -> FillLine(GREEN, 0, 0,
+        holdPieceScreen -> GetWidth(), true);
+    if (holdPiece != NULL)
+        PieceRenderer::RenderPiece(*holdPieceScreen, *holdPiece, 0, 1);
+    holdPieceScreen -> FillLine(WHITE, 0, 0, 4, true);
+    holdPieceScreen -> FillLine(BLACK, 0, 0, 4, false);
+}
+
 Tetromino* Tetris::NextPiece() {
     Tetromino* result;
     this -> pieceQueue.push_back(pieceGenerator -> Get());
@@ -141,11 +165,24 @@ Tetromino* Tetris::NextPiece() {
     return result;
 }
 
-Tetromino* Tetris::EmitPiece() {
-    Tetromino* piece = this -> NextPiece();
+Tetromino* Tetris::EmitPiece(Tetromino* piece) {
+    if (piece == NULL)
+        piece = this -> NextPiece();
     piece -> x = (TetrisStage::width - Tetromino::size) / 2;
     piece -> y = -(Tetromino::size / 2);
     return piece;
+}
+
+void Tetris::HoldPiece() {
+    if (holdPiece == NULL) {
+        holdPiece = currentPiece;
+        currentPiece = this -> EmitPiece();
+    }
+    else {
+        Tetromino* temp = currentPiece;
+        currentPiece = this -> EmitPiece(holdPiece);
+        holdPiece = temp;
+    }
 }
 
 void Tetris::AttachPiece() {

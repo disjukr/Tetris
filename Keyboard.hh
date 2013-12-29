@@ -9,6 +9,9 @@ enum Key {
     A,
     S,
     D,
+    Z,
+    X,
+    C,
     ETC
 };
 
