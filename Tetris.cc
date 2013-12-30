@@ -84,10 +84,6 @@ void Tetris::GameLoop() {
                 currentPiece -> RotateCCW();
             });
             break;
-        case DOWN: case S:
-            this -> SoftDrop();
-            ++statistics.score;
-            break;
         case LEFT: case A:
             this -> ControlPiece([this]() {
                 --(currentPiece -> x);
@@ -97,6 +93,10 @@ void Tetris::GameLoop() {
             this -> ControlPiece([this]() {
                 ++(currentPiece -> x);
             });
+            break;
+        case DOWN: case S:
+            this -> SoftDrop();
+            ++statistics.score;
             break;
         case SPACE: case F:
             this -> HardDrop();
@@ -266,7 +266,6 @@ void Tetris::HardDrop(bool attach) {
 }
 
 void Tetris::ControlPiece(std::function<void()> controlFunction) {
-    // try control
     Tetromino* trash;
     Tetromino* backup = currentPiece -> Clone();
     controlFunction();
