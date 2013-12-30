@@ -1,5 +1,6 @@
 #include "Tetris.hh"
 
+#include <cmath>
 #include <string>
 #include <iostream>
 #include "Time.hh"
@@ -127,6 +128,10 @@ void Tetris::GameLoop() {
     case 3: ++statistics._triple; statistics.score += 500; break;
     case 4: ++statistics._tetris; statistics.score += 800; break;
     }
+    if (statistics.score > statistics.level * 1000) {
+        ++statistics.level;
+        dropFrameInterval = max(dropFrameInterval - 1, 1);
+    }
 }
 
 void Tetris::Render() {
@@ -153,6 +158,9 @@ void Tetris::Render() {
     mainScreen -> WriteLine("score:", xOffset, ++yOffset);
     mainScreen -> WriteLine(
         to_string(statistics.score), xOffset + 7, yOffset);
+    mainScreen -> WriteLine("level:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics.level), xOffset + 7, yOffset);
     ++yOffset;
     int valueOffset = xOffset + 8;
     mainScreen -> WriteLine("single:", xOffset, ++yOffset);

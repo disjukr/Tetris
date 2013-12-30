@@ -32,12 +32,14 @@ public:
 
 struct TetrisStatistics {
     int score;
+    int level;
     int _single;
     int _double;
     int _triple;
     int _tetris;
     TetrisStatistics() {
         score = 0;
+        level = 1;
         _single = 0;
         _double = 0;
         _triple = 0;
