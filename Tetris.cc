@@ -14,6 +14,7 @@ Tetris::Tetris() {
     this -> interval = 17;
     this -> frame = 0;
     this -> dropFrameInterval = 20;
+    this -> attachFrameInterval = 10;
     this -> lastDrop = this -> frame;
     this -> pieceGenerator = new TGM2Randomizer();
     this -> queueScreen = new Screen(
@@ -79,10 +80,8 @@ void Tetris::GameLoop() {
             });
             break;
         case DOWN: case S:
-            this -> ControlPiece([this]() {
-                ++(currentPiece -> y);
-                ++statistics.score;
-            });
+            this -> SoftDrop();
+            ++statistics.score;
             break;
         case LEFT: case A:
             this -> ControlPiece([this]() {
@@ -100,6 +99,14 @@ void Tetris::GameLoop() {
         case Z:
             this -> HoldPiece();
             break;
+        case X:
+            this -> ControlPiece([this]() {
+                currentPiece -> RotateCCW();
+            });
+            break;
+        case C:
+            this -> HardDrop(false);
+            break;
         case ESC:
             this -> Exit();
             return;
@@ -107,9 +114,10 @@ void Tetris::GameLoop() {
             break;
         }
     }
-    if (dropFrameInterval < (int) (frame - lastDrop)) {
-        this -> SoftDrop();
-        lastDrop = frame;
+    int frameDiff = (int) (frame - lastDrop);
+    if (dropFrameInterval < frameDiff) {
+        if (this -> SoftDrop(attachFrameInterval < frameDiff))
+            lastDrop = frame;
     }
     if (this -> CheckGameOver()) {
         this -> Exit();
@@ -237,18 +245,22 @@ void Tetris::AttachPiece() {
     currentPiece = this -> EmitPiece();
 }
 
-void Tetris::SoftDrop() {
+bool Tetris::SoftDrop(bool attach) {
     ++(this -> currentPiece -> y);
     if (stage.CheckCollision(*currentPiece)) {
         --(this -> currentPiece -> y);
-        this -> AttachPiece();
+        if (attach)
+            this -> AttachPiece();
+        return false;
     }
+    return true;
 }
 
-void Tetris::HardDrop() {
+void Tetris::HardDrop(bool attach) {
     int cast = stage.CastPiece(*currentPiece);
     statistics.score += 2 * cast;
-    this -> AttachPiece();
+    if (attach)
+        this -> AttachPiece();
 }
 
 void Tetris::ControlPiece(std::function<void()> controlFunction) {

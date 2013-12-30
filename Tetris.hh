@@ -53,6 +53,7 @@ class Tetris {
     int interval;
     unsigned int frame;
     int dropFrameInterval;
+    int attachFrameInterval;
     int lastDrop;
     TetrisStatistics statistics;
     TetrisStage stage;
@@ -70,8 +71,8 @@ class Tetris {
     Tetromino* EmitPiece(Tetromino* piece = NULL);
     void HoldPiece();
     void AttachPiece();
-    void SoftDrop();
-    void HardDrop();
+    bool SoftDrop(bool attach = true);
+    void HardDrop(bool attach = true);
     void ControlPiece(std::function<void()> controlFunction);
     bool CheckGameOver();
     bool CheckLine(int y);
