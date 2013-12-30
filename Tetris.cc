@@ -260,7 +260,9 @@ void Tetris::HardDrop(bool attach) {
     int cast = stage.CastPiece(*currentPiece);
     statistics.score += 2 * cast;
     if (attach)
-        this -> AttachPiece();
+        AttachPiece();
+    else
+        Infinity();
 }
 
 void Tetris::ControlPiece(std::function<void()> controlFunction) {
@@ -276,7 +278,10 @@ void Tetris::ControlPiece(std::function<void()> controlFunction) {
         trash = backup;
     }
     delete trash;
-    // infinity rule
+    Infinity();
+}
+
+void Tetris::Infinity() {
     ++(currentPiece -> y);
     if (stage.CheckCollision(*currentPiece))
         lastDrop = frame;

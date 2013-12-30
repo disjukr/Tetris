@@ -74,6 +74,7 @@ class Tetris {
     bool SoftDrop(bool attach = true);
     void HardDrop(bool attach = true);
     void ControlPiece(std::function<void()> controlFunction);
+    void Infinity();
     bool CheckGameOver();
     bool CheckLine(int y);
 public:
