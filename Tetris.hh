@@ -36,6 +36,13 @@ struct TetrisStatistics {
     int _double;
     int _triple;
     int _tetris;
+    TetrisStatistics() {
+        score = 0;
+        _single = 0;
+        _double = 0;
+        _triple = 0;
+        _tetris = 0;
+    }
 };
 
 class Tetris {

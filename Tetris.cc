@@ -23,7 +23,6 @@ Tetris::Tetris() {
         Tetromino::size * 2, Tetromino::size + 1);
     this -> currentPiece = this -> EmitPiece();
     this -> holdPiece = NULL;
-    this -> statistics = {0, 0, 0, 0, 0};
 }
 
 Tetris::~Tetris() {
