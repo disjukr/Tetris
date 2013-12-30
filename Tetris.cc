@@ -79,6 +79,11 @@ void Tetris::GameLoop() {
                 currentPiece -> RotateCW();
             });
             break;
+        case X: case Q:
+            this -> ControlPiece([this]() {
+                currentPiece -> RotateCCW();
+            });
+            break;
         case DOWN: case S:
             this -> SoftDrop();
             ++statistics.score;
@@ -93,19 +98,14 @@ void Tetris::GameLoop() {
                 ++(currentPiece -> x);
             });
             break;
-        case SPACE:
+        case SPACE: case F:
             this -> HardDrop();
             break;
-        case Z:
-            this -> HoldPiece();
-            break;
-        case X:
-            this -> ControlPiece([this]() {
-                currentPiece -> RotateCCW();
-            });
-            break;
-        case C:
+        case C: case R:
             this -> HardDrop(false);
+            break;
+        case Z: case E:
+            this -> HoldPiece();
             break;
         case ESC:
             this -> Exit();

@@ -65,10 +65,14 @@ Key Keyboard::code() {
                 }
             }
 #endif
+        case 'q': case 'Q': return Q;
         case 'w': case 'W': return W;
         case 'a': case 'A': return A;
         case 's': case 'S': return S;
         case 'd': case 'D': return D;
+        case 'e': case 'E': return E;
+        case 'r': case 'R': return R;
+        case 'f': case 'F': return F;
         case 'z': case 'Z': return Z;
         case 'x': case 'X': return X;
         case 'c': case 'C': return C;
