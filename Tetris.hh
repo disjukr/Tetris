@@ -23,11 +23,19 @@ public:
     ~TetrisStage();
     bool CheckBlock(int x, int y);
     bool CheckCollision(Tetromino& piece);
-    void CastPiece(Tetromino& piece);
+    int CastPiece(Tetromino& piece);
     void AttachPiece(Tetromino& piece);
     void Render(Tetromino& piece, bool renderGhost);
     void EraseLine(int y);
     Screen* GetScreen();
+};
+
+struct TetrisStatistics {
+    int score;
+    int _single;
+    int _double;
+    int _triple;
+    int _tetris;
 };
 
 class Tetris {
@@ -37,6 +45,7 @@ class Tetris {
     unsigned int frame;
     int dropFrameInterval;
     int lastDrop;
+    TetrisStatistics statistics;
     TetrisStage stage;
     Screen* queueScreen;
     Screen* holdPieceScreen;
@@ -61,7 +70,7 @@ public:
     Tetris();
     ~Tetris();
     void SetFps(int fps);
-    void Start();
+    TetrisStatistics Start();
     void Exit();
 };
 

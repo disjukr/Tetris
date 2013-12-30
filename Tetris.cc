@@ -1,5 +1,6 @@
 #include "Tetris.hh"
 
+#include <string>
 #include <iostream>
 #include "Time.hh"
 #include "Keyboard.hh"
@@ -22,6 +23,7 @@ Tetris::Tetris() {
         Tetromino::size * 2, Tetromino::size + 1);
     this -> currentPiece = this -> EmitPiece();
     this -> holdPiece = NULL;
+    this -> statistics = {0, 0, 0, 0, 0};
 }
 
 Tetris::~Tetris() {
@@ -44,7 +46,7 @@ void Tetris::Exit() {
     this -> exit = true;
 }
 
-void Tetris::Start() {
+TetrisStatistics Tetris::Start() {
     long long int curr;
     long long int prev = Time::msec();
     long long int diff;
@@ -65,6 +67,7 @@ void Tetris::Start() {
     Console::Clear();
     Console::SetEcho(true);
     Console::SetCursor(true);
+    return statistics;
 }
 
 void Tetris::GameLoop() {
@@ -78,6 +81,7 @@ void Tetris::GameLoop() {
         case DOWN: case S:
             this -> ControlPiece([this]() {
                 ++(currentPiece -> y);
+                ++statistics.score;
             });
             break;
         case LEFT: case A:
@@ -111,9 +115,19 @@ void Tetris::GameLoop() {
         this -> Exit();
         return;
     }
-    for (int i = 0; i < TetrisStage::height; ++i)
-        if (this -> CheckLine(i))
+    int lineCount = 0;
+    for (int i = 0; i < TetrisStage::height; ++i) {
+        if (this -> CheckLine(i)) {
             this -> stage.EraseLine(i);
+            ++lineCount;
+        }
+    }
+    switch (lineCount) {
+    case 1: ++statistics._single; statistics.score += 100; break;
+    case 2: ++statistics._double; statistics.score += 300; break;
+    case 3: ++statistics._triple; statistics.score += 500; break;
+    case 4: ++statistics._tetris; statistics.score += 800; break;
+    }
 }
 
 void Tetris::Render() {
@@ -123,6 +137,7 @@ void Tetris::Render() {
     int xOffset = 2;
     int xGap = 1;
     int ceilOffset = 1;
+    int yOffset = ceilOffset + 1;
     Screen* mainScreen = Console::GetScreen();
     Screen* stageScreen = stage.GetScreen();
     mainScreen -> Clear(' ', BLACK, GREEN);
@@ -131,6 +146,28 @@ void Tetris::Render() {
     mainScreen -> RenderScreen(*stageScreen, xOffset, ceilOffset);
     xOffset += stageScreen -> GetWidth() + xGap;
     mainScreen -> RenderScreen(*queueScreen, xOffset, ceilOffset);
+    xOffset += queueScreen -> GetWidth() + xGap;
+    // statistics
+    mainScreen -> WriteLine("STATISTICS", xOffset, ceilOffset);
+    mainScreen -> FillLine(WHITE, xOffset, ceilOffset, 10, true);
+    ++xOffset;
+    mainScreen -> WriteLine("score:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics.score), xOffset + 7, yOffset);
+    ++yOffset;
+    int valueOffset = xOffset + 8;
+    mainScreen -> WriteLine("single:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics._single), valueOffset, yOffset);
+    mainScreen -> WriteLine("double:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics._double), valueOffset, yOffset);
+    mainScreen -> WriteLine("triple:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics._triple), valueOffset, yOffset);
+    mainScreen -> WriteLine("tetris:", xOffset, ++yOffset);
+    mainScreen -> WriteLine(
+        to_string(statistics._tetris), valueOffset, yOffset);
     Console::Update();
 }
 
@@ -202,7 +239,8 @@ void Tetris::SoftDrop() {
 }
 
 void Tetris::HardDrop() {
-    stage.CastPiece(*currentPiece);
+    int cast = stage.CastPiece(*currentPiece);
+    statistics.score += 2 * cast;
     this -> AttachPiece();
 }
 
@@ -288,10 +326,14 @@ bool TetrisStage::CheckCollision(Tetromino& piece) {
     return false;
 }
 
-void TetrisStage::CastPiece(Tetromino& piece) {
-    while (!(this -> CheckCollision(piece)))
+int TetrisStage::CastPiece(Tetromino& piece) {
+    int lineCount = 0;
+    while (!(this -> CheckCollision(piece))) {
         ++piece.y;
+        ++lineCount;
+    }
     --piece.y;
+    return lineCount - 1;
 }
 
 void TetrisStage::AttachPiece(Tetromino& piece) {
