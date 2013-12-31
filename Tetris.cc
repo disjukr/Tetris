@@ -9,6 +9,21 @@
 
 using namespace std;
 
+Color complementary_color(Color sample) {
+    switch (sample) {
+    case NONE: return NONE;
+    case WHITE: return BLACK;
+    case GREY: return GREY;
+    case BLACK: return WHITE;
+    case BLUE: return YELLOW;
+    case CYAN: return RED;
+    case GREEN: return MAGENTA;
+    case MAGENTA: return GREEN;
+    case RED: return CYAN;
+    case YELLOW: return BLUE;
+    }
+}
+
 Tetris::Tetris() {
     this -> exit = false;
     this -> interval = 17;
@@ -17,7 +32,7 @@ Tetris::Tetris() {
     this -> attachFrameInterval = 10;
     this -> lastDrop = this -> frame;
     this -> pieceGenerator = new TGM2Randomizer();
-    this -> backgroundColor = GREEN;
+    this -> backgroundColor = BLUE;
     this -> queueScreen = new Screen(
         Tetromino::size * 2, (Tetromino::size + 1) * pieceQueueSize);
     for (int i = 0; i < pieceQueueSize; ++i)
@@ -153,7 +168,8 @@ void Tetris::Render() {
     int yOffset = ceilOffset + 1;
     Screen* mainScreen = Console::GetScreen();
     Screen* stageScreen = stage.GetScreen();
-    mainScreen -> Clear(' ', BLACK, backgroundColor);
+    mainScreen -> Clear(
+        ' ', complementary_color(backgroundColor), backgroundColor);
     mainScreen -> RenderScreen(*holdPieceScreen, xOffset, ceilOffset);
     xOffset += holdPieceScreen -> GetWidth() + xGap;
     mainScreen -> RenderScreen(*stageScreen, xOffset, ceilOffset);
@@ -163,6 +179,7 @@ void Tetris::Render() {
     // statistics
     mainScreen -> WriteLine("STATISTICS", xOffset, ceilOffset);
     mainScreen -> FillLine(WHITE, xOffset, ceilOffset, 10, true);
+    mainScreen -> FillLine(BLACK, xOffset, ceilOffset, 10, false);
     ++xOffset;
     mainScreen -> WriteLine("score:", xOffset, ++yOffset);
     mainScreen -> WriteLine(
