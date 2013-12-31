@@ -11,7 +11,7 @@ using namespace std;
 
 Color complementary_color(Color sample) {
     switch (sample) {
-    case NONE: return NONE;
+    default: return NONE;
     case WHITE: return BLACK;
     case GREY: return GREY;
     case BLACK: return WHITE;
