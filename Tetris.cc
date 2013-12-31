@@ -152,10 +152,8 @@ void Tetris::GameLoop() {
     case 3: ++statistics._triple; statistics.score += 500; break;
     case 4: ++statistics._tetris; statistics.score += 800; break;
     }
-    if (statistics.score > statistics.level * 1000) {
-        ++statistics.level;
-        dropFrameInterval = max(dropFrameInterval - 1, 1);
-    }
+    if (statistics.score > statistics.level * 1000)
+        LevelUp();
 }
 
 void Tetris::Render() {
@@ -303,6 +301,13 @@ void Tetris::Infinity() {
     if (stage.CheckCollision(*currentPiece))
         lastDrop = frame;
     --(currentPiece -> y);
+}
+
+void Tetris::LevelUp() {
+    ++statistics.level;
+    dropFrameInterval = max(dropFrameInterval - 1, 1);
+    int color = (int) backgroundColor - 4;
+    backgroundColor = (Color) ((++color % 6) + 4);
 }
 
 bool Tetris::CheckGameOver() {
