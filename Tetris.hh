@@ -57,6 +57,7 @@ class Tetris {
     int lastDrop;
     TetrisStatistics statistics;
     TetrisStage stage;
+    Color backgroundColor;
     Screen* queueScreen;
     Screen* holdPieceScreen;
     PieceGenerator* pieceGenerator;

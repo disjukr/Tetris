@@ -17,6 +17,7 @@ Tetris::Tetris() {
     this -> attachFrameInterval = 10;
     this -> lastDrop = this -> frame;
     this -> pieceGenerator = new TGM2Randomizer();
+    this -> backgroundColor = GREEN;
     this -> queueScreen = new Screen(
         Tetromino::size * 2, (Tetromino::size + 1) * pieceQueueSize);
     for (int i = 0; i < pieceQueueSize; ++i)
@@ -152,7 +153,7 @@ void Tetris::Render() {
     int yOffset = ceilOffset + 1;
     Screen* mainScreen = Console::GetScreen();
     Screen* stageScreen = stage.GetScreen();
-    mainScreen -> Clear(' ', BLACK, GREEN);
+    mainScreen -> Clear(' ', BLACK, backgroundColor);
     mainScreen -> RenderScreen(*holdPieceScreen, xOffset, ceilOffset);
     xOffset += holdPieceScreen -> GetWidth() + xGap;
     mainScreen -> RenderScreen(*stageScreen, xOffset, ceilOffset);
@@ -192,7 +193,7 @@ void Tetris::RenderPieceQueue() {
     queueScreen -> Clear(' ', BLACK, BLACK);
     queueScreen -> WriteLine("NEXT", 0, 0);
     for (int i = 0; i < pieceQueueSize; ++i) {
-        queueScreen -> FillLine(GREEN, 0, i * offset, width, true);
+        queueScreen -> FillLine(backgroundColor, 0, i * offset, width, true);
         PieceRenderer::RenderPiece(
             *queueScreen, *pieceQueue[i], 0, i * offset + 1);
     }
@@ -203,7 +204,7 @@ void Tetris::RenderPieceQueue() {
 void Tetris::RenderHoldPiece() {
     holdPieceScreen -> Clear(' ', BLACK, BLACK);
     holdPieceScreen -> WriteLine("HOLD", 0, 0);
-    holdPieceScreen -> FillLine(GREEN, 0, 0,
+    holdPieceScreen -> FillLine(backgroundColor, 0, 0,
         holdPieceScreen -> GetWidth(), true);
     if (holdPiece != NULL)
         PieceRenderer::RenderPiece(*holdPieceScreen, *holdPiece, 0, 1);
