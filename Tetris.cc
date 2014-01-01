@@ -56,6 +56,16 @@ Intro::Intro() {
         particles[i] = particle;
         ResetParticle(i);
     }
+    string t = "";
+    t += "||||||||    ||||||||    ||||||||    ||||||      ||||      ||||||";
+    t += "||||||||    ||||||||    ||||||||    ||||||||    ||||    ||||||||";
+    t += "   ||       ||             ||       ||    ||     ||     ||||    ";
+    t += "   ||       ||||||         ||       ||    ||     ||       ||||  ";
+    t += "   ||       ||             ||       ||||||       ||         ||||";
+    t += "   ||       ||||||||       ||       ||    ||     ||     ||||||||";
+    t += "   ||       ||||||||       ||       ||    ||     ||     ||||||  ";
+    for (int i = 0; i < titleTableSize; ++i)
+        titleTable[i] = t[i] == '|';
 }
 
 Intro::~Intro() {
@@ -78,7 +88,7 @@ void Intro::Render() {
     screen -> Clear(' ', BLACK, WHITE);
     if ((frame % 50) > 25)
         screen -> WriteLine(
-            "Press Any Key to Start", (width - 22) / 2, height - 7);
+            "Press Any Key to Start", (width - 22) >> 1, height - 7);
     for (int i = 0; i < numberOfParticle; ++i){
         Tetromino* particle = particles[i];
         rotations[i] += rotateSpeeds[i];
@@ -103,6 +113,7 @@ void Intro::Render() {
         }
         particle -> Render(*screen, particle -> x, particle -> y);
     }
+    RenderTitle((width - titleWidth) >> 1, 6);
 }
 
 void Intro::ResetParticle(int index) {
@@ -111,6 +122,24 @@ void Intro::ResetParticle(int index) {
     falls[index] = random.Get(0, 100);
     fallSpeeds[index] = random.Get(5, 20);
     directions[index] = random.Get() < 0.5;
+}
+
+void Intro::RenderTitle(int x, int y) {
+    int xx;
+    int yy;
+    Screen* screen = Console::GetScreen();
+    for (int i = 0; i < titleWidth; ++i) {
+        for (int j = 0; j < titleHeight; ++j) {
+            if (titleTable[j * titleWidth + i]) {
+                xx = x + i;
+                yy = y + j;
+                screen -> FillCell(
+                    ColorUtil::GetComplementary(
+                        screen -> GetColor(xx, yy, true)),
+                    xx, yy, true);
+            }
+        }
+    }
 }
 
 Tetris::Tetris() {

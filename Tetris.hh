@@ -25,6 +25,9 @@ protected:
 
 class Intro: public Page {
     static const int numberOfParticle = 10;
+    static const int titleWidth = 64;
+    static const int titleHeight = 7;
+    static const int titleTableSize = titleWidth * titleHeight;
     Lfsr113 random;
     TGM2Randomizer pieceGenerator;
     Tetromino* particles[numberOfParticle];
@@ -33,7 +36,9 @@ class Intro: public Page {
     int falls[numberOfParticle];
     int fallSpeeds[numberOfParticle];
     bool directions[numberOfParticle]; // true: cw, false: ccw
+    bool titleTable[titleTableSize];
     void ResetParticle(int index);
+    void RenderTitle(int x, int y);
 public:
     Intro();
     ~Intro();
