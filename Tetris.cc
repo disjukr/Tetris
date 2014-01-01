@@ -22,6 +22,7 @@ void Page::Start() {
         Loop();
         if (diff >= interval) {
             Render();
+            Console::Update();
             prev = curr - (diff - interval);
             ++frame;
         }
@@ -37,6 +38,23 @@ void Page::SetFps(int fps) {
 
 void Page::Exit() {
     exit = true;
+}
+
+void Intro::Loop() {
+    if (Keyboard::hit()) {
+        Keyboard::code(); // consume character
+        Exit();
+    }
+}
+
+void Intro::Render() {
+    Screen* screen = Console::GetScreen();
+    int width = screen -> GetWidth();
+    int height = screen -> GetHeight();
+    screen -> Clear(' ', BLACK, WHITE);
+    if ((frame % 50) > 25)
+        screen -> WriteLine(
+            "Press Any Key to Start", (width - 22) / 2, height - 7);
 }
 
 Tetris::Tetris() {
@@ -179,7 +197,6 @@ void Tetris::Render() {
     mainScreen -> WriteLine("tetris:", xOffset, ++yOffset);
     mainScreen -> WriteLine(
         to_string(statistics._tetris), valueOffset, yOffset);
-    Console::Update();
 }
 
 void Tetris::RenderPieceQueue() {

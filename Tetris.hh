@@ -17,10 +17,19 @@ public:
     int interval;
     void Start();
     void SetFps(int fps);
-    virtual void Render() {}
     virtual void Exit();
 protected:
     virtual void Loop() {}
+    virtual void Render() {}
+};
+
+class Intro: public Page {
+public:
+    Intro() {}
+    ~Intro() {}
+protected:
+    virtual void Loop();
+    virtual void Render();
 };
 
 class TetrisStage {
@@ -80,7 +89,6 @@ class Tetris: public Page {
     std::deque<Tetromino*> pieceQueue;
     Tetromino* currentPiece;
     Tetromino* holdPiece;
-    virtual void Render();
     void RenderPieceQueue();
     void RenderHoldPiece();
     Tetromino* NextPiece();
@@ -99,4 +107,5 @@ public:
     ~Tetris();
 protected:
     virtual void Loop();
+    virtual void Render();
 };

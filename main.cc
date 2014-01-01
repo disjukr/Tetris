@@ -6,12 +6,12 @@
 #include <csignal>
 #include "Tetris.hh"
 
-Tetris* game;
+Page* currentPage;
 
 void signalHandler(int sig) {
     switch (sig) {
     case SIGINT: case SIGTERM:
-        game -> Exit();
+        currentPage -> Exit();
         break;
     default: break;
     }
@@ -26,8 +26,11 @@ int main() {
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
     // game logic
-    game = new Tetris();
-    game -> Start();
-    delete game;
+    currentPage = new Intro();
+    currentPage -> Start();
+    delete currentPage;
+    currentPage = new Tetris();
+    currentPage -> Start();
+    delete currentPage;
     return 0;
 }
