@@ -46,10 +46,9 @@ Intro::Intro() {
     int size = Tetromino::size * 2;
     for (int i = 0; i < numberOfParticle; ++i) {
         Tetromino* particle = pieceGenerator.Get();
-        particle = pieceGenerator.Get();
-        particle -> x = random.Get() * (width - size);
-        particle -> y = random.Get() * height - (height + size);
-        int rotate = random.Get() * 4;
+        particle -> x = random.Get(0, width - size);
+        particle -> y = random.Get(0, height) - (height + size);
+        int rotate = random.Get(0, 4);
         while (rotate > 0) {
             --rotate;
             particle -> RotateCW();
@@ -96,7 +95,9 @@ void Intro::Render() {
             falls[i] = 0;
         }
         if (particle -> y > height) {
-            particle -> x = random.Get() * (width - size);
+            delete particles[i];
+            particles[i] = particle = pieceGenerator.Get();
+            particle -> x = random.Get(0, width - size);
             particle -> y = -size;
             ResetParticle(i);
         }
@@ -105,9 +106,9 @@ void Intro::Render() {
 }
 
 void Intro::ResetParticle(int index) {
-    rotations[index] = random.Get() * 100;
+    rotations[index] = random.Get(0, 100);
     rotateSpeeds[index] = random.Get(1, 5);
-    falls[index] = random.Get() * 100;
+    falls[index] = random.Get(0, 100);
     fallSpeeds[index] = random.Get(5, 20);
     directions[index] = random.Get() < 0.5;
 }
