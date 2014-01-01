@@ -209,8 +209,7 @@ void Tetris::RenderPieceQueue() {
     queueScreen -> WriteLine("NEXT", 0, 0);
     for (int i = 0; i < pieceQueueSize; ++i) {
         queueScreen -> FillLine(backgroundColor, 0, i * offset, width, true);
-        PieceRenderer::RenderPiece(
-            *queueScreen, *pieceQueue[i], 0, i * offset + 1);
+        (*pieceQueue[i]).Render(*queueScreen, 0, i * offset + 1);
     }
     queueScreen -> FillLine(WHITE, 0, 0, 4, true);
     queueScreen -> FillLine(BLACK, 0, 0, 4, false);
@@ -222,7 +221,7 @@ void Tetris::RenderHoldPiece() {
     holdPieceScreen -> FillLine(backgroundColor, 0, 0,
         holdPieceScreen -> GetWidth(), true);
     if (holdPiece != NULL)
-        PieceRenderer::RenderPiece(*holdPieceScreen, *holdPiece, 0, 1);
+        (*holdPiece).Render(*holdPieceScreen, 0, 1);
     holdPieceScreen -> FillLine(WHITE, 0, 0, 4, true);
     holdPieceScreen -> FillLine(BLACK, 0, 0, 4, false);
 }
@@ -419,7 +418,7 @@ void TetrisStage::RenderStage() {
 }
 
 void TetrisStage::RenderPiece(Tetromino& piece) {
-    PieceRenderer::RenderPiece(*(this -> screen), piece, piece.x, piece.y);
+    piece.Render(*(this -> screen), piece.x, piece.y);
 }
 
 void TetrisStage::RenderGhostPiece(Tetromino& piece) {

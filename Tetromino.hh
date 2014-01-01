@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Color.hh"
+#include "Screen.hh"
 
 class Tetromino {
 public:
@@ -21,6 +21,18 @@ public:
     virtual void RotateCCW() = 0;
     virtual bool CheckBlock(int x, int y) {
         return !(x < 0 || x >= size || y < 0 || y >= size);
+    }
+    void Render(Screen& screen, int x, int y) {
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                int tx = (i + x) * 2;
+                int ty = j + y;
+                if (this -> CheckBlock(i, j)) {
+                    screen.FillCell(this -> color, tx, ty, true);
+                    screen.FillCell(this -> color, tx + 1, ty, true);
+                }
+            }
+        }
     }
     Color color;
     int x;

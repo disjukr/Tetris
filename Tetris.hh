@@ -86,19 +86,3 @@ public:
     TetrisStatistics Start();
     void Exit();
 };
-
-class PieceRenderer {
-public:
-    static void RenderPiece(Screen& screen, Tetromino& piece, int x, int y) {
-        for (int i = 0; i < Tetromino::size; ++i) {
-            for (int j = 0; j < Tetromino::size; ++j) {
-                int tx = (i + x) * 2;
-                int ty = j + y;
-                if (piece.CheckBlock(i, j)) {
-                    screen.FillCell(piece.color, tx, ty, true);
-                    screen.FillCell(piece.color, tx + 1, ty, true);
-                }
-            }
-        }
-    }
-};
