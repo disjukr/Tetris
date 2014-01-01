@@ -4,6 +4,25 @@
 #include <functional>
 #include <deque>
 
+class Page {
+    bool exit;
+public:
+    Page() {
+        exit = false;
+        frame = 0;
+        interval = 17;
+    }
+    virtual ~Page() {}
+    int frame;
+    int interval;
+    void Start();
+    void SetFps(int fps);
+    virtual void Render() {}
+    virtual void Exit();
+protected:
+    virtual void Loop() {}
+};
+
 class TetrisStage {
 public:
     static const int width = 10;
@@ -47,11 +66,8 @@ struct TetrisStatistics {
     }
 };
 
-class Tetris {
+class Tetris: public Page {
     static const int pieceQueueSize = 4;
-    bool exit;
-    int interval;
-    unsigned int frame;
     int dropFrameInterval;
     int attachFrameInterval;
     int lastDrop;
@@ -64,8 +80,7 @@ class Tetris {
     std::deque<Tetromino*> pieceQueue;
     Tetromino* currentPiece;
     Tetromino* holdPiece;
-    void GameLoop();
-    void Render();
+    virtual void Render();
     void RenderPieceQueue();
     void RenderHoldPiece();
     Tetromino* NextPiece();
@@ -82,7 +97,6 @@ class Tetris {
 public:
     Tetris();
     ~Tetris();
-    void SetFps(int fps);
-    TetrisStatistics Start();
-    void Exit();
+protected:
+    virtual void Loop();
 };

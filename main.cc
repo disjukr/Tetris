@@ -27,7 +27,6 @@ int main() {
     signal(SIGTERM, signalHandler);
     // game logic
     game = new Tetris();
-    game -> SetFps(24);
     game -> Start();
     delete game;
     return 0;

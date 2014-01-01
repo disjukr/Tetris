@@ -9,12 +9,39 @@
 
 using namespace std;
 
+void Page::Start() {
+    long long int curr;
+    long long int prev = Time::msec();
+    long long int diff;
+    Console::Clear();
+    Console::SetEcho(false);
+    Console::SetCursor(false);
+    while (!exit) {
+        curr = Time::msec();
+        diff = curr - prev;
+        Loop();
+        if (diff >= interval) {
+            Render();
+            prev = curr - (diff - interval);
+            ++frame;
+        }
+    }
+    Console::Clear();
+    Console::SetEcho(true);
+    Console::SetCursor(true);
+}
+
+void Page::SetFps(int fps) {
+    interval = 1000 / fps;
+}
+
+void Page::Exit() {
+    exit = true;
+}
+
 Tetris::Tetris() {
-    this -> exit = false;
-    this -> interval = 17;
-    this -> frame = 0;
     this -> dropFrameInterval = 20;
-    this -> attachFrameInterval = 10;
+    this -> attachFrameInterval = 20;
     this -> lastDrop = this -> frame;
     this -> pieceGenerator = new TGM2Randomizer();
     this -> backgroundColor = BLUE;
@@ -40,39 +67,7 @@ Tetris::~Tetris() {
         delete this -> holdPiece;
 }
 
-void Tetris::SetFps(int fps) {
-    this -> interval = 1000 / fps;
-}
-
-void Tetris::Exit() {
-    this -> exit = true;
-}
-
-TetrisStatistics Tetris::Start() {
-    long long int curr;
-    long long int prev = Time::msec();
-    long long int diff;
-    Console::Clear();
-    Console::SetEcho(false);
-    Console::SetCursor(false);
-    while (!exit) {
-        curr = Time::msec();
-        diff = curr - prev;
-        GameLoop();
-        if (exit) break;
-        if (diff >= interval) {
-            Render();
-            prev = curr - (diff - interval);
-            ++frame;
-        }
-    }
-    Console::Clear();
-    Console::SetEcho(true);
-    Console::SetCursor(true);
-    return statistics;
-}
-
-void Tetris::GameLoop() {
+void Tetris::Loop() {
     if (Keyboard::hit()) {
         switch(Keyboard::code()) {
         case UP: case W:
