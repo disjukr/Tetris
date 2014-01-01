@@ -5,7 +5,6 @@
 #include <iostream>
 #include "Time.hh"
 #include "Keyboard.hh"
-#include "Randomizer.hh"
 
 using namespace std;
 
@@ -40,6 +39,31 @@ void Page::Exit() {
     exit = true;
 }
 
+Intro::Intro() {
+    Screen* screen = Console::GetScreen();
+    int width = screen -> GetWidth();
+    int height = screen -> GetHeight();
+    int size = Tetromino::size * 2;
+    for (int i = 0; i < numberOfParticle; ++i) {
+        Tetromino* particle = pieceGenerator.Get();
+        particle = pieceGenerator.Get();
+        particle -> x = random.Get() * (width - size);
+        particle -> y = random.Get() * height - (height + size);
+        int rotate = random.Get() * 4;
+        while (rotate > 0) {
+            --rotate;
+            particle -> RotateCW();
+        }
+        particles[i] = particle;
+        ResetParticle(i);
+    }
+}
+
+Intro::~Intro() {
+    for (int i = 0; i < numberOfParticle; ++i)
+        delete particles[i];
+}
+
 void Intro::Loop() {
     if (Keyboard::hit()) {
         Keyboard::code(); // consume character
@@ -51,10 +75,41 @@ void Intro::Render() {
     Screen* screen = Console::GetScreen();
     int width = screen -> GetWidth();
     int height = screen -> GetHeight();
+    int size = Tetromino::size * 2;
     screen -> Clear(' ', BLACK, WHITE);
     if ((frame % 50) > 25)
         screen -> WriteLine(
             "Press Any Key to Start", (width - 22) / 2, height - 7);
+    for (int i = 0; i < numberOfParticle; ++i){
+        Tetromino* particle = particles[i];
+        rotations[i] += rotateSpeeds[i];
+        if (rotations[i] > 100) {
+            if (directions[i])
+                particle -> RotateCW();
+            else
+                particle -> RotateCCW();
+            rotations[i] = 0;
+        }
+        falls[i] += fallSpeeds[i];
+        if (falls[i] > 100) {
+            ++particle -> y;
+            falls[i] = 0;
+        }
+        if (particle -> y > height) {
+            particle -> x = random.Get() * (width - size);
+            particle -> y = -size;
+            ResetParticle(i);
+        }
+        particle -> Render(*screen, particle -> x, particle -> y);
+    }
+}
+
+void Intro::ResetParticle(int index) {
+    rotations[index] = random.Get() * 100;
+    rotateSpeeds[index] = random.Get(1, 5);
+    falls[index] = random.Get() * 100;
+    fallSpeeds[index] = random.Get(5, 20);
+    directions[index] = random.Get() < 0.5;
 }
 
 Tetris::Tetris() {
@@ -415,7 +470,7 @@ void TetrisStage::RenderStage() {
 }
 
 void TetrisStage::RenderPiece(Tetromino& piece) {
-    piece.Render(*(this -> screen), piece.x, piece.y);
+    piece.Render(*(this -> screen), piece.x * 2, piece.y);
 }
 
 void TetrisStage::RenderGhostPiece(Tetromino& piece) {

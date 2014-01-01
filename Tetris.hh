@@ -24,9 +24,19 @@ protected:
 };
 
 class Intro: public Page {
+    static const int numberOfParticle = 10;
+    Lfsr113 random;
+    TGM2Randomizer pieceGenerator;
+    Tetromino* particles[numberOfParticle];
+    int rotations[numberOfParticle];
+    int rotateSpeeds[numberOfParticle];
+    int falls[numberOfParticle];
+    int fallSpeeds[numberOfParticle];
+    bool directions[numberOfParticle]; // true: cw, false: ccw
+    void ResetParticle(int index);
 public:
-    Intro() {}
-    ~Intro() {}
+    Intro();
+    ~Intro();
 protected:
     virtual void Loop();
     virtual void Render();

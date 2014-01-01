@@ -25,7 +25,7 @@ public:
     void Render(Screen& screen, int x, int y) {
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
-                int tx = (i + x) * 2;
+                int tx = i * 2 + x;
                 int ty = j + y;
                 if (this -> CheckBlock(i, j)) {
                     screen.FillCell(this -> color, tx, ty, true);
