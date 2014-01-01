@@ -9,21 +9,6 @@
 
 using namespace std;
 
-Color complementary_color(Color sample) {
-    switch (sample) {
-    case NONE: return NONE;
-    case WHITE: return BLACK;
-    case GREY: return GREY;
-    case BLACK: return WHITE;
-    case BLUE: return YELLOW;
-    case CYAN: return RED;
-    case GREEN: return MAGENTA;
-    case MAGENTA: return GREEN;
-    case RED: return CYAN;
-    case YELLOW: return BLUE;
-    }
-}
-
 Tetris::Tetris() {
     this -> exit = false;
     this -> interval = 17;
@@ -167,7 +152,7 @@ void Tetris::Render() {
     Screen* mainScreen = Console::GetScreen();
     Screen* stageScreen = stage.GetScreen();
     mainScreen -> Clear(
-        ' ', complementary_color(backgroundColor), backgroundColor);
+        ' ', ColorUtil::GetComplementary(backgroundColor), backgroundColor);
     mainScreen -> RenderScreen(*holdPieceScreen, xOffset, ceilOffset);
     xOffset += holdPieceScreen -> GetWidth() + xGap;
     mainScreen -> RenderScreen(*stageScreen, xOffset, ceilOffset);
